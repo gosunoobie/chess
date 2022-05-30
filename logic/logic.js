@@ -179,14 +179,25 @@ function pawnPossibleMoves(selectedBlock, selectedPieceType) {
   
 
 function pawnConquerPossibleMoves(nextBlock,currentColumn){
+
+
+  
 if(currentColumn>0&&nextBlock.previousElementSibling.hasAttribute('filled')){
-    possibleMoves.push(nextBlock.previousElementSibling)
+  
+  if(nextBlock.previousElementSibling.getAttribute('color')===currentPiece.getAttribute('color'))
+
+  return 
+  possibleMoves.push(nextBlock.previousElementSibling)
     nextBlock.previousElementSibling.setAttribute('conquer','')
 }
-if(currentColumn<7&&nextBlock.nextElementSibling.hasAttribute('filled')){
+if(currentColumn<7&& nextBlock.nextElementSibling.hasAttribute('filled')){
+
+  if(nextBlock.nextElementSibling.getAttribute('color') === currentPiece.getAttribute('color'))
+  return
     possibleMoves.push(nextBlock.nextElementSibling)
     nextBlock.nextElementSibling.setAttribute('conquer','')
 }
+
 }
 //For the Kinght
 
@@ -299,6 +310,17 @@ while(rows>initialrows-3&&column<=initialcolumn){
 
 }
 
+possibleMoves = possibleMoves.filter(item=>{
+    
+  if(!(item.getAttribute('color') === currentPiece.getAttribute('color')))
+  {
+  return item
+  }
+  else{
+    item.removeAttribute('conquer');
+    return
+  }
+})
 
 addingEventsInPossibleMoves(possibleMoves)
 
@@ -386,7 +408,17 @@ while(rows>=0&&column<8){
 
 
    possibleMoves = possibleMoves.filter(item=>item!==currentBlock)
-
+   possibleMoves = possibleMoves.filter(item=>{
+    
+    if(!(item.getAttribute('color') === currentPiece.getAttribute('color')))
+    {
+    return item
+    }
+    else{
+      item.removeAttribute('conquer');
+      return
+    }
+  })
 addingEventsInPossibleMoves(possibleMoves)
 }
 
@@ -461,7 +493,17 @@ while(column>=0){
 
 
    possibleMoves = possibleMoves.filter(item=>item!==currentBlock)
-
+   possibleMoves = possibleMoves.filter(item=>{
+    
+    if(!(item.getAttribute('color') === currentPiece.getAttribute('color')))
+    {
+    return item
+    }
+    else{
+      item.removeAttribute('conquer');
+      return
+    }
+  })
 addingEventsInPossibleMoves(possibleMoves)
 }
 
@@ -483,6 +525,12 @@ queenPossibleMoves(currentBlock)
 }
 
 
+// function isKingInDanger(currentBlock){
+//   let blackKing = document.querySelector(`[data-piece="blackKing"]`)
+//   let whiteKing = document.querySelector(`[data-piece="whiteKing"]`)
+//   if(blackKing.hasAttribute('conquer'))
+//   console.log(blackKing,whiteKing)
+// }
 
 
 
@@ -526,13 +574,18 @@ currentColumn = lettersIn[currentColumn]
 let pieceMovingToNextBlock = function pieceMovingToNextBlockFunc
 (event) {
   let selectedPieceType = currentPiece.getAttribute("data-piece");
+  
+    let currentPieceColor = currentPiece.getAttribute('color')
+  
   event.target.classList.remove("possible");
 
   event.target.setAttribute("data-piece", `${selectedPieceType}`);
   currentPiece.removeAttribute("data-piece");
+  currentPiece.removeAttribute('color')
   currentPiece.removeAttribute("filled");
 resetPossibleMoves()
 event.target.setAttribute('filled','')
+event.target.setAttribute('color',`${currentPieceColor}`)
   event.target.addEventListener("click", selectingPiece);
 
 };
