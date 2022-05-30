@@ -1,0 +1,139 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.chess-board {
+  border: 2px solid black;
+  width: 550px;
+  height: 550px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.whiteBlock {
+  background: rgb(238, 238, 210);
+  border: 1px solid black;
+}
+
+.blackBlock {
+  background: rgb(118, 150, 86);
+  border: 1px solid black;
+}
+
+div[data-piece=blackPawn] {
+  background-image: url(../images/blackPawn.png);
+  background-size: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=blackRook] {
+  background-image: url(../images/blackRook.png);
+  background-size: 37.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=blackKnight] {
+  background-image: url(../images/blackKnight.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=blackBishop] {
+  background-image: url(../images/blackBishop.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=blackQueen] {
+  background-image: url(../images/blackQueen.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=blackKing] {
+  background-image: url(../images/blackKing.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=whitePawn] {
+  background-image: url(../images/whitePawn.png);
+  background-size: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=whiteRook] {
+  background-image: url(../images/whiteRook.png);
+  background-size: 37.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=whiteKnight] {
+  background-image: url(../images/whiteKnight.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=whiteBishop] {
+  background-image: url(../images/whiteBishop.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=whiteQueen] {
+  background-image: url(../images/whiteQueen.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[data-piece=whiteKing] {
+  background-image: url(../images/whiteKing.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.25s ease-in-out;
+}
+
+div[selected] {
+  background-size: 40px;
+}
+
+.possible {
+  background: rgba(108, 154, 168, 0.5);
+}
+
+div[conquer] {
+  background-color: rgba(187, 45, 45, 0.5);
+}/*# sourceMappingURL=style.css.map */
