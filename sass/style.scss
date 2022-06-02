@@ -9,6 +9,7 @@ body{
     justify-content: center;
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
 }
 .chess-board{
   
@@ -126,4 +127,41 @@ background-size: 40px;
 div[conquer]{
     background-color: rgba(187, 45, 45,0.5);
     
+}
+
+div[checkmate]{
+    background-color: red;
+}
+
+.piece-selection-container{
+display: none;
+    position: absolute;
+z-index: 2;
+    width: 20rem;
+background: wheat;
+padding: 1.5rem;
+text-align: center;
+left: 50%;
+top: 50%;
+transform: translate(-50%,-50%);
+border: 2px solid black;
+transform-style: preserve-3d;
+}
+.container-wrapper{
+    content: " ";
+    position: absolute;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(108, 154, 168,0.25);
+    transform: inherit;
+display: none;
+}
+
+
+.piece-option{
+    padding: 1rem;
+    border: 2px solid black;
+    font-size: 1.125rem;
+    font-weight: 600;
 }
