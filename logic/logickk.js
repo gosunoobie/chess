@@ -2,9 +2,6 @@ const chessBoard = document.querySelector(".chess-board");
 const boardLength = 8;
 let possibleMoves = [];
 let conquerMoves = [];
-let currentDraggingBlockWidth;
-let draggedItemClone;
-let currentHoveringBlock ;
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const lettersIn = {
   A: 0,
@@ -18,30 +15,106 @@ const lettersIn = {
 };
 let boardId = 0;
 let currentPiece = 0;
-let dx= 0;
-let dy =0;
-let draggedItem;
+
+
+function createBoard() {
+  for (let i = 0; i < boardLength; i++) {
+    for (let j = 0; j < boardLength; j++) {
+      const boardBlock = document.createElement("div");
+      boardBlock.setAttribute("data-id", boardId);
+      boardBlock.setAttribute("data-rc", `${letters[j]}${i }`);
+      boardBlock.setAttribute("data-column", `${letters[j]}`);
+      boardBlock.setAttribute("data-row", `${i }`);
+
+      if ((i % 2 === 0 && j % 2 == 0) || (i % 2 === 1 && j % 2 == 1)) {
+        boardBlock.classList.add("whiteBlock");
+      } else {
+        boardBlock.classList.add("blackBlock");
+      }
+
+      chessBoard.append(boardBlock);
+
+      if (boardId === 49) {
+        boardBlock.setAttribute("data-piece", "whitePawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','white')
+      }
+
+      if (boardId === 0) {
+        boardBlock.setAttribute("data-piece", "blackPawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','black')
+      }
+      if (boardId === 6) {
+        boardBlock.setAttribute("data-piece", "blackPawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','black')
+      }
+
+      if (boardId === 8) {
+        boardBlock.setAttribute("data-piece", "blackPawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','black')
+      }
+      if (boardId === 55) {
+        boardBlock.setAttribute("data-piece", "whitePawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','white')
+      }
+      if (boardId === 10) {
+        boardBlock.setAttribute("data-piece", "blackPawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','black')
+      }
+      if (boardId === 44) {
+        boardBlock.setAttribute("data-piece", "blackPawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','black')
+      }
+      if (boardId === 12) {
+        boardBlock.setAttribute("data-piece", "blackKing");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','black')
+      }
+      if (boardId === 20) {
+        boardBlock.setAttribute("data-piece", "whitePawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','white')
+      }
+      if (boardId === 27) {
+        boardBlock.setAttribute("data-piece", "whitePawn");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','white')
+      }
+      if (boardId === 22) {
+        boardBlock.setAttribute("data-piece", "whiteKing");
+        boardBlock.setAttribute("filled", "");
+        boardBlock.setAttribute('color','white')
+      }
+
+      piecesEvents(boardBlock);
+      boardId++;
+    }
+  }
+}
+createBoard();
+
+function piecesEvents(boardBlock) {
+  boardBlock.addEventListener("mouseover", (e) => {
+
+    if (!e.target.classList.contains("possible"))
+      e.target.addEventListener("click", selectingPiece);
+  });
+
+  boardBlock.addEventListener("mouseleave", (e) => {
+    e.target.removeEventListener("click", selectingPiece);
+  });
+}
+
+
+
 let selectingPiece = function selectingPieceFunc(event) {
   let selectedBlock = event.target;
-
-
-  currentDraggingBlockWidth = selectedBlock.offsetWidth;
-
-
-  // cloning the piece to drag
-  dx = event.clientX - selectedBlock.getBoundingClientRect().x;
-  dy = event.clientY - selectedBlock.getBoundingClientRect().y;
-  draggedItem =selectedBlock
-   draggedItemClone = draggedItem.cloneNode(true);
-   draggedItemClone.setAttribute('noevents','')
-   selectedBlock.parentElement.appendChild(draggedItemClone)
-  draggedItemClone.style.position = 'absolute';
-
-  event.dataTransfer.setDragImage(event.target, window.outerWidth, window.outerHeight);
-draggedItem.style.opacity = '0'
-
-
-
 
   if (currentPiece !== selectedBlock && currentPiece !== 0) {
     resetPossibleMoves();
@@ -51,21 +124,15 @@ draggedItem.style.opacity = '0'
 
   if (currentPiece === selectedBlock) return;
 
-
   currentPiece = selectedBlock;
- 
 
   if (selectedPieceType === "whitePawn" || selectedPieceType === "blackPawn") {
     pawnPossibleMoves(selectedBlock, selectedPieceType);
     return;
   }
- 
 if(selectedPieceType)
   {selectedPieceType = selectedPieceType.replace('white','').replace('black','');
   }
-
-  selectedBlock = selectedBlock.parentElement;
-
   if(selectedPieceType === 'Rook'){
       rookPossibleMoves(selectedBlock)
   }
@@ -87,148 +154,21 @@ if(selectedPieceType === 'King'){
 };
 
 
-function createBoard() {
-  for (let i = 0; i < boardLength; i++) {
-    for (let j = 0; j < boardLength; j++) {
-      const boardBlock = document.createElement("article");
-      boardBlock.setAttribute("data-id", boardId);
-      boardBlock.setAttribute("data-rc", `${letters[j]}${i }`);
-      boardBlock.setAttribute("data-column", `${letters[j]}`);
-      boardBlock.setAttribute("data-row", `${i }`);
-
-      if ((i % 2 === 0 && j % 2 == 0) || (i % 2 === 1 && j % 2 == 1)) {
-        boardBlock.classList.add("whiteBlock");
-      } else {
-        boardBlock.classList.add("blackBlock");
-      }
-
-      chessBoard.append(boardBlock);
-
-      if (boardId === 49) {
-     createPiece('whiteRook','white',boardBlock)
-      }
-
-      if (boardId === 1) {
-
-        createPiece('blackRook','black',boardBlock)    
-      }
-      if (boardId === 6) {
-        createPiece('blackBishop','black',boardBlock)  
-      }
-
-      if (boardId === 8) {
-        createPiece('blackKnight','black',boardBlock)  
-      }
-      if (boardId === 45) {
-        createPiece('blackPawn','black',boardBlock)  
-      }
-      if (boardId === 10) {
-        createPiece('blackPawn','black',boardBlock)  
-      }
-      if (boardId === 44) {
-        createPiece('whiteBishop','white',boardBlock)  
-      }
-      if (boardId === 12) {
-  
-      }
-      if (boardId === 20) {
-        createPiece('blackQueen','black',boardBlock) 
-      }
-      if (boardId === 27) {
-   
-      }
-      if (boardId === 14) {
-        createPiece('whiteKing','white',boardBlock) 
-      }
-
-      piecesEvents(boardBlock);
-      boardId++;
-    }
-  }
-}
-createBoard();
-
-
-function createPiece(pieceType,pieceColor,boardBlock){
-  const actualPiece = document.createElement('div')
-  actualPiece.setAttribute("data-piece", pieceType);
-  actualPiece.setAttribute("filled", "");
-  actualPiece.setAttribute('color',pieceColor)
-  actualPiece.setAttribute('draggable','true')
-  boardBlock.appendChild(actualPiece)
-}
-
-
-
-
-
-function piecesEvents(boardBlock) {
-  if(boardBlock.firstChild)
-  boardBlock.addEventListener('dragstart', selectingPiece)
-
-  boardBlock.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    let leftX = e.clientX -dx ;
-    let topY = e.clientY -dy;
-
-    draggedItemClone.style.width = `${currentDraggingBlockWidth}px`
-    draggedItemClone.style.height = `${currentDraggingBlockWidth}px`
-   
-    draggedItemClone.style.left = `${leftX}px`
-    draggedItemClone.style.top = `${topY}px`
-    
-
-      if(e.target.hasAttribute('filled'))
-      { currentHoveringBlock = e.target.parentElement;
-    return
-      }
-      
-      currentHoveringBlock =e.target;
-
-
-
-   //
-        // boardBlock.addEventListener('dragover',draggingPiece)
-      
-  });
-
-  // boardBlock.addEventListener("dragend", (e) => {
-    // e.target.removeEventListener("click", selectingPiece);
-
-
-
-  
-      // e.target.removeEventListener('dragover',draggingPiece)
-    
-
-  // });
-}
-
-// let draggingPiece = function draggingPieceFunc(event){
-
-// }
-
-
-
 // For the Pawn 
 
 function pawnPossibleMoves(selectedBlock, selectedPieceType) {
-    selectedBlockId = selectedBlock.parentElement.getAttribute("data-id");
+    selectedBlockId = selectedBlock.getAttribute("data-id");
     selectedBlockId = parseInt(selectedBlockId);
-    possibleMoves.push(selectedBlock.parentElement)
     let nextBlock;
-    
     let currentColumn;
     if (selectedPieceType === "whitePawn") {
       nextBlock = document.querySelector(
         `[data-id="${selectedBlockId - boardLength}"]`
      
         );
-   
-  if(nextBlock.firstChild)
+  if(nextBlock.hasAttribute('filled'))
   return;
       possibleMoves.push(nextBlock);
-  
       currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
     pawnConquerPossibleMoves(nextBlock,currentColumn)
     }
@@ -237,7 +177,7 @@ function pawnPossibleMoves(selectedBlock, selectedPieceType) {
       nextBlock = document.querySelector(
         `[data-id="${selectedBlockId + boardLength}"]`
       );
-      if(nextBlock.firstChild)
+      if(nextBlock.hasAttribute('filled'))
       return;
       possibleMoves.push(nextBlock);
       currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
@@ -252,17 +192,17 @@ function pawnConquerPossibleMoves(nextBlock,currentColumn){
 
 
   
-if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
-
-  if(nextBlock.previousElementSibling.firstChild.getAttribute('color')===currentPiece.getAttribute('color'))
+if(currentColumn>0&&nextBlock.previousElementSibling.hasAttribute('filled')){
+  
+  if(nextBlock.previousElementSibling.getAttribute('color')===currentPiece.getAttribute('color'))
 
   return 
   possibleMoves.push(nextBlock.previousElementSibling)
     nextBlock.previousElementSibling.setAttribute('conquer','')
 }
-if(currentColumn<7&& nextBlock.nextElementSibling.firstChild){
+if(currentColumn<7&& nextBlock.nextElementSibling.hasAttribute('filled')){
 
-  if(nextBlock.nextElementSibling.firstChild.getAttribute('color') === currentPiece.getAttribute('color'))
+  if(nextBlock.nextElementSibling.getAttribute('color') === currentPiece.getAttribute('color'))
   return
     possibleMoves.push(nextBlock.nextElementSibling)
     nextBlock.nextElementSibling.setAttribute('conquer','')
@@ -272,11 +212,10 @@ if(currentColumn<7&& nextBlock.nextElementSibling.firstChild){
 
 
 function pawnUpgrade(currentBlock){
- 
   let container = document.querySelector('.piece-selection-container')  
   let containerWrapper = document.querySelector('.container-wrapper')
   let options = container.querySelectorAll('.piece-option')
-  let currentPieceColor = currentBlock.firstChild.getAttribute('color')
+  let currentPieceColor = currentBlock.getAttribute('color')
 container.style.display = "block"
 containerWrapper.style.display = 'block'
 let selectedPieceType = new Promise( (resolve,reject)=>{
@@ -302,7 +241,7 @@ let selectedPieceType = new Promise( (resolve,reject)=>{
 selectedPieceType.then((message) => {
   let upgradePieceType= currentPieceColor + message;
 
-  currentBlock.firstChild.setAttribute('data-piece',`${upgradePieceType}`) 
+  currentBlock.setAttribute('data-piece',`${upgradePieceType}`) 
   let container = document.querySelector('.piece-selection-container') 
   let containerWrapper = document.querySelector('.container-wrapper')
 
@@ -315,7 +254,7 @@ container.style.display = 'none'
 containerWrapper.style.display = 'none'
 
  
- 
+  console.log('done')
 })
 selectedPieceType.catch((error)=>{
   console.log(error)
@@ -335,26 +274,25 @@ function knightPossibleMoves(currentBlock){
 let rows = parseInt(currentRow)+1
 let  column = lettersIn[currentColumn]+2
 
-let currentPieceType =  currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
+let currentPieceType =  currentBlock.getAttribute('data-piece').replace('white','').replace('black','')
 
 while(rows<initialrows+3&&column>=initialcolumn){
 
   let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
 
-if(!nextBlock)
+    if(!nextBlock)
     {
       rows++;
       column--;
       continue;
     }
-    if(nextBlock.firstChild)
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
     {
-
 
         nextBlock.setAttribute('conquer','')
 
-        let nextPieceType = nextBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
-        let nextPieceColor = nextBlock.firstChild.getAttribute('color')
+        let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
+        let nextPieceColor = nextBlock.getAttribute('color')
         if((nextPieceType === 'Knight')&& currentBlock.getAttribute('color') !== nextPieceColor)
         if(currentPieceType === "King")
          currentBlock.setAttribute('checkmate','')
@@ -381,15 +319,13 @@ while(rows<initialrows+3&&column<=initialcolumn){
       column++;
       continue;
     }
-    if(nextBlock.firstChild)
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
     {
-    
-      
       
 
         nextBlock.setAttribute('conquer','')
-        let nextPieceType = nextBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
-        let nextPieceColor = nextBlock.firstChild.getAttribute('color')
+        let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
+        let nextPieceColor = nextBlock.getAttribute('color')
         if((nextPieceType === 'Knight')&& currentBlock.getAttribute('color') !== nextPieceColor)
         if(currentPieceType === "King")
          currentBlock.setAttribute('checkmate','')
@@ -414,14 +350,14 @@ while(rows>initialrows-3&&column>=initialcolumn){
       column--;
       continue;
     }
-    if(nextBlock.firstChild)
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
     {
       
 
       nextBlock.setAttribute('conquer','')
       
-      let nextPieceType = nextBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
-      let nextPieceColor = nextBlock.firstChild.getAttribute('color')
+      let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
+      let nextPieceColor = nextBlock.getAttribute('color')
       if((nextPieceType === 'Knight')&& currentBlock.getAttribute('color') !== nextPieceColor)
       if(currentPieceType === "King")
        currentBlock.setAttribute('checkmate','')
@@ -448,14 +384,14 @@ while(rows>initialrows-3&&column<=initialcolumn){
     column++;
     continue;
   }
-  if(nextBlock.firstChild)
+  if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
   {
     
 
     nextBlock.setAttribute('conquer','')
     
-    let nextPieceType = nextBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
-    let nextPieceColor = nextBlock.firstChild.getAttribute('color')
+    let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
+    let nextPieceColor = nextBlock.getAttribute('color')
     if((nextPieceType === 'Knight')&& currentBlock.getAttribute('color') !== nextPieceColor)
     if(currentPieceType === "King")
      currentBlock.setAttribute('checkmate','')
@@ -466,19 +402,17 @@ while(rows>initialrows-3&&column<=initialcolumn){
 
 }
 
-// possibleMoves = possibleMoves.filter(item=>{
+possibleMoves = possibleMoves.filter(item=>{
     
-//   if(!(item.getAttribute('color') === currentBlock.getAttribute('color')))
-//   {
-//   return item
-//   }
-//   else{
-//     item.removeAttribute('conquer');
-//     return
-//   }
-// })
-
-possibleMoves.push(currentBlock)
+  if(!(item.getAttribute('color') === currentBlock.getAttribute('color')))
+  {
+  return item
+  }
+  else{
+    item.removeAttribute('conquer');
+    return
+  }
+})
 
 addingEventsInPossibleMoves(possibleMoves)
 
@@ -499,34 +433,33 @@ let rows = parseInt(currentRow)
 let currentPieceRow = rows;
 let  column = lettersIn[currentColumn]
 
-let currentPieceType = currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','');
+let currentPieceType = currentBlock.getAttribute('data-piece').replace('white','').replace('black','');
 
+
+
+// console.log(currentPieceType)
 
 while(rows<8&&column>=0){
     let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
     possibleMoves.push(nextBlock)
-  
-    if(currentBlock!==nextBlock)
-    { 
-      
-      if(nextBlock.firstChild){
-      nextBlock = nextBlock.firstChild
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
+    {
 
       let nextPieceTypeInitial = nextBlock.getAttribute('data-piece')
       let nextPieceType = nextPieceTypeInitial.replace('white','').replace('black','')
       let nextPieceColor = nextBlock.getAttribute('color')
   
   
-      if(rows===currentPieceRow+1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
+      if(rows===currentPieceRow+1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.getAttribute('color')))){
         if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
   currentBlock.setAttribute('checkmate','') }  
       if(!(currentPieceType === "King"))
-        nextBlock.parentElement.setAttribute('conquer','')
+        nextBlock.setAttribute('conquer','')
         if((nextPieceType === 'Bishop'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
         if(currentPieceType === "King")
          currentBlock.setAttribute('checkmate','')
         break;
-    }}
+    }
     rows++;
     column--;
 
@@ -537,28 +470,26 @@ column = lettersIn[currentColumn]
 while(rows<8&&column<8){
   let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
   possibleMoves.push(nextBlock)
-
-  if(currentBlock!==nextBlock)
-  {  if(nextBlock.firstChild){
-    nextBlock = nextBlock.firstChild
+  if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
+  {
     let nextPieceTypeInitial = nextBlock.getAttribute('data-piece')
     let nextPieceType = nextPieceTypeInitial.replace('white','').replace('black','')
     let nextPieceColor = nextBlock.getAttribute('color')
 
 
-    if(rows===currentPieceRow+1 &&(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color'))){
+    if(rows===currentPieceRow+1 &&(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.getAttribute('color'))){
       if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
       currentBlock.setAttribute('checkmate','')   
     
     }
     
     if(!(currentPieceType === "King"))
-      nextBlock.parentElement.setAttribute('conquer','')
-      if((nextPieceType === 'Bishop'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
+      nextBlock.setAttribute('conquer','')
+      if((nextPieceType === 'Bishop'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
       if(currentPieceType === "King")
        currentBlock.setAttribute('checkmate','')
       break;
-  }}
+  }
   rows++;
   column++;
 
@@ -570,44 +501,8 @@ column = lettersIn[currentColumn]
 while(rows>=0&&column>=0){
   let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
   possibleMoves.push(nextBlock)
-
-  if(currentBlock!==nextBlock)
+  if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
   {
-    if(nextBlock.firstChild)
-    {
-      nextBlock = nextBlock.firstChild
-    let nextPieceTypeInitial = nextBlock.getAttribute('data-piece')
-    let nextPieceType = nextPieceTypeInitial.replace('white','').replace('black','')
-    let nextPieceColor = nextBlock.getAttribute('color')
-
-
-    if(rows===currentPieceRow-1 && (nextPieceTypeInitial === "blackPawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color'))){
-      if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
-      currentBlock.setAttribute('checkmate','')   
-    }
-    
-    if(!(currentPieceType === "King"))
-      nextBlock.parentElement.setAttribute('conquer','')
-      if((nextPieceType === 'Bishop'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
-      if(currentPieceType === "King")
-       currentBlock.setAttribute('checkmate','')
-      break;
-  }}
-  rows--;
-  column--;
-
-}
-rows = parseInt(currentRow)
-column = lettersIn[currentColumn]
-
-
-while(rows>=0&&column<8){
-  let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
-  possibleMoves.push(nextBlock)
-  
-  if(currentBlock!==nextBlock)
-  {  if(nextBlock.firstChild){
-    nextBlock = nextBlock.firstChild
     let nextPieceTypeInitial = nextBlock.getAttribute('data-piece')
     let nextPieceType = nextPieceTypeInitial.replace('white','').replace('black','')
     let nextPieceColor = nextBlock.getAttribute('color')
@@ -619,37 +514,62 @@ while(rows>=0&&column<8){
     }
     
     if(!(currentPieceType === "King"))
-      nextBlock.parentElement.setAttribute('conquer','')
+      nextBlock.setAttribute('conquer','')
+      if((nextPieceType === 'Bishop'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
+      if(currentPieceType === "King")
+       currentBlock.setAttribute('checkmate','')
+      break;
+  }
+  rows--;
+  column--;
+
+}
+rows = parseInt(currentRow)
+column = lettersIn[currentColumn]
+
+
+while(rows>=0&&column<8){
+  let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
+  possibleMoves.push(nextBlock)
+  if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
+  {  
+    let nextPieceTypeInitial = nextBlock.getAttribute('data-piece')
+    let nextPieceType = nextPieceTypeInitial.replace('white','').replace('black','')
+    let nextPieceColor = nextBlock.getAttribute('color')
+
+
+    if(rows===currentPieceRow-1 && (nextPieceTypeInitial === "blackPawn" && nextPieceColor !== currentBlock.getAttribute('color'))){
+      if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
+      currentBlock.setAttribute('checkmate','')   
+    }
+    
+    if(!(currentPieceType === "King"))
+      nextBlock.setAttribute('conquer','')
 
       if((nextPieceType === 'Bishop'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
       if(currentPieceType === "King")
        currentBlock.setAttribute('checkmate','')
       break;
-  }}
+  }
   rows--;
   column++;
 
 }
 
 
-possibleMoves = possibleMoves.filter(item=>{
 
-
-  if(!item.firstChild||item ===currentBlock)
-  return item
-if(!(item.firstChild.getAttribute('color') === currentBlock.firstChild.getAttribute('color')))
-{
-return item
-}
-else{
-  item.removeAttribute('conquer');
-  return
-}
-})
-
-
-
-
+   possibleMoves = possibleMoves.filter(item=>item!==currentBlock)
+   possibleMoves = possibleMoves.filter(item=>{
+    
+    if(!(item.getAttribute('color') === currentBlock.getAttribute('color')))
+    {
+    return item
+    }
+    else{
+      item.removeAttribute('conquer');
+      return
+    }
+  })
 addingEventsInPossibleMoves(possibleMoves)
 }
 
@@ -660,39 +580,32 @@ function rookPossibleMoves(currentBlock){
 
    let currentRow = currentBlock.getAttribute("data-row")
    let currentColumn = currentBlock.getAttribute("data-column")
-   let currentPieceType = currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','');
- 
+   let currentPieceType = currentBlock.getAttribute('data-piece').replace('white','').replace('black','');
+
 let rows = parseInt(currentRow)
 let currentPieceRow = rows;
 let  column = lettersIn[currentColumn]
 let currentPieceColumn = column
-
 while(rows<8){
     let nextBlock = document.querySelector(`[data-rc="${currentColumn}${rows}"]`);
-  
-
-    if(currentBlock!==nextBlock)
-    {  possibleMoves.push(nextBlock)
-      if(nextBlock.firstChild)
-      {
-      nextBlock = nextBlock.firstChild
-     
-      
+    possibleMoves.push(nextBlock)
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
+    {
       let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
       let nextPieceColor = nextBlock.getAttribute('color')
 if(rows===currentPieceRow+1 && nextPieceType === "King")
-currentBlock.firstChild.setAttribute('checkmate','')      
+currentBlock.setAttribute('checkmate','')      
       if(!(currentPieceType === "King" ))
-        nextBlock.parentElement.setAttribute('conquer','')
+        nextBlock.setAttribute('conquer','')
 
 
-    if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
+    if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
     if(currentPieceType === "King")
      currentBlock.setAttribute('checkmate','')
 
-  
+      
         break;
-    }}
+    }
     rows++;
 
 }
@@ -700,119 +613,97 @@ rows = parseInt(currentRow)
 
 while(rows>=0){
     let nextBlock = document.querySelector(`[data-rc="${currentColumn}${rows}"]`);
-    
-  
-    if(currentBlock!==nextBlock)
-    {   possibleMoves.push(nextBlock)
-      if(nextBlock.firstChild){
-
-        nextBlock = nextBlock.firstChild
-      let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
+    possibleMoves.push(nextBlock)
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
+    {     let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
     let nextPieceColor = nextBlock.getAttribute('color')
       if(rows===currentPieceRow-1 && nextPieceType === "King")
       currentBlock.setAttribute('checkmate','')  
      
-      if(!(currentPieceType==="King"))
+      if(!(currentBlock.getAttribute('data-piece')==="whiteKing"||currentBlock.getAttribute('data-piece')==="blackKing"))
       
-        nextBlock.parentElement.setAttribute('conquer','')
+        nextBlock.setAttribute('conquer','')
 
 
 
    
-        if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
+        if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
         if(currentPieceType === "King")
          currentBlock.setAttribute('checkmate','')
 
       
         break;
-    }}
+    }
     rows--;
 
 }
 
-column = lettersIn[currentColumn]
 
 while(column<8){
-  let nextBlock = document.querySelector(`[data-rc="${letters[column]}${currentRow}"]`);
- 
-
-  if(currentBlock!==nextBlock)
-  {     possibleMoves.push(nextBlock)
-    if(nextBlock.firstChild){
-
-      nextBlock = nextBlock.firstChild
-    let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
-  let nextPieceColor = nextBlock.getAttribute('color')
-  if(column===currentPieceColumn+1 && nextPieceType === "King")
-    currentBlock.setAttribute('checkmate','')  
-   
-    if(!(currentPieceType==="King"))
-    
-      nextBlock.parentElement.setAttribute('conquer','')
-
-
+    let nextBlock = document.querySelector(`[data-rc="${letters[column]}${currentRow}"]`);
+    possibleMoves.push(nextBlock)
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
+    {       let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
+    let nextPieceColor = nextBlock.getAttribute('color')
+      if(column===currentPieceColumn+1 && nextPieceType === "King")
+      currentBlock.setAttribute('checkmate','')  
+     
+      if(!(currentBlock.getAttribute('data-piece')==="whiteKing"||currentBlock.getAttribute('data-piece')==="blackKing"))
+      
+        nextBlock.setAttribute('conquer','')
 
  
-      if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
-      if(currentPieceType === "King")
-       currentBlock.setAttribute('checkmate','')
+        if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
+        if(currentPieceType === "King")
+         currentBlock.setAttribute('checkmate','')
 
-    
-      break;
-  }}
-  column++;
+      
+        break;
+    }
+    column++;
 
 }
-
 column = lettersIn[currentColumn]
+
 while(column>=0){
-  let nextBlock = document.querySelector(`[data-rc="${letters[column]}${currentRow}"]`);
-  possibleMoves.push(nextBlock)
-
-  if(currentBlock!==nextBlock)
-  { 
-    
-    if(nextBlock.firstChild){
-
-      nextBlock = nextBlock.firstChild
-    let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
-  let nextPieceColor = nextBlock.getAttribute('color')
-  if(column===currentPieceColumn-1 && nextPieceType === "King")
-    currentBlock.setAttribute('checkmate','')  
-   
-    if(!(currentPieceType==="King"))
-    
-      nextBlock.parentElement.setAttribute('conquer','')
+    let nextBlock = document.querySelector(`[data-rc="${letters[column]}${currentRow}"]`);
+    possibleMoves.push(nextBlock)
+    if(nextBlock.hasAttribute("filled")&&currentBlock!==nextBlock)
+    {        let nextPieceType = nextBlock.getAttribute('data-piece').replace('white','').replace('black','')
+    let nextPieceColor = nextBlock.getAttribute('color')
+      if(column===currentPieceColumn-1 && nextPieceType === "King")
+      currentBlock.setAttribute('checkmate','')  
+     
+      if(!(currentBlock.getAttribute('data-piece')==="whiteKing"||currentBlock.getAttribute('data-piece')==="blackKing"))
+      
+        nextBlock.setAttribute('conquer','')
 
 
+        if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.getAttribute('color') !== nextPieceColor)
+        if(currentPieceType === "King")
+         currentBlock.setAttribute('checkmate','')
 
- 
-      if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
-      if(currentPieceType === "King")
-       currentBlock.setAttribute('checkmate','')
-
-    
-      break;
-  }}
-  column--;
+      
+        break;
+    }
+    column--;
 
 }
 
-possibleMoves = possibleMoves.filter(item=>{
 
 
-    if(!item.firstChild||item ===currentBlock)
+   possibleMoves = possibleMoves.filter(item=>item!==currentBlock)
+   possibleMoves = possibleMoves.filter(item=>{
+    
+    if(!(item.getAttribute('color') === currentBlock.getAttribute('color')))
+    {
     return item
-  if(!(item.firstChild.getAttribute('color') === currentBlock.firstChild.getAttribute('color')))
-  {
-  return item
-  }
-  else{
-    item.removeAttribute('conquer');
-    return
-  }
-})
-
+    }
+    else{
+      item.removeAttribute('conquer');
+      return
+    }
+  })
 addingEventsInPossibleMoves(possibleMoves)
 }
 
@@ -850,10 +741,10 @@ knightPossibleMoves(blackKing)
 
 function addingEventsInPossibleMoves(possibleMoves) {
 
-
+ 
 if(currentPiece.getAttribute('data-piece')==="whiteKing"||currentPiece.getAttribute('data-piece')==="blackKing"){
-let currentRow = currentPiece.parentElement.getAttribute('data-row')
-let currentColumn = currentPiece.parentElement.getAttribute('data-column')
+let currentRow = currentPiece.getAttribute('data-row')
+let currentColumn = currentPiece.getAttribute('data-column')
 currentRow = parseInt(currentRow)
 currentColumn = lettersIn[currentColumn]
 
@@ -863,7 +754,7 @@ currentColumn = lettersIn[currentColumn]
     
     rowValue = parseInt(rowValue)
     columnValue = lettersIn[columnValue]
-    if(currentRow===rowValue-1||currentRow===rowValue+1||currentColumn===columnValue+1||currentColumn===columnValue-1||(currentColumn===columnValue&&currentRow==rowValue)){
+    if(currentRow===rowValue-1||currentRow===rowValue+1||currentColumn===columnValue+1||currentColumn===columnValue-1){
       return item
     }
     
@@ -876,7 +767,7 @@ currentColumn = lettersIn[currentColumn]
 
   possibleMoves.forEach((item) => {
 
-    item.addEventListener("dragend", pieceMovingToNextBlock);
+    item.addEventListener("click", pieceMovingToNextBlock);
     item.classList.add("possible");
   });
 }
@@ -885,56 +776,32 @@ currentColumn = lettersIn[currentColumn]
 
 let pieceMovingToNextBlock = function pieceMovingToNextBlockFunc
 (event) {
-let isEmpty = true;
-
-draggedItemClone.parentElement.removeChild(draggedItemClone)
-
-
-currentPiece.style.opacity = "1"
-if(currentHoveringBlock.firstChild === currentPiece)
-return
-  if((currentHoveringBlock.classList.contains('possible'))||(currentHoveringBlock.parentElement.classList.contains('possible'))){  
-    
+  let selectedPieceType = currentPiece.getAttribute("data-piece");
   
-    
-    if(currentHoveringBlock.firstChild)
-    isEmpty = false;
- 
+    let currentPieceColor = currentPiece.getAttribute('color')
+  
+  event.target.classList.remove("possible");
 
-let  currentPieceClone = currentPiece.cloneNode(true);
-
-
-event.target.parentElement.removeChild(currentPiece) 
+  event.target.setAttribute("data-piece", `${selectedPieceType}`);
+  currentPiece.removeAttribute("data-piece");
+  currentPiece.removeAttribute('color')
+  currentPiece.removeAttribute("filled");
 resetPossibleMoves()
-if(isEmpty=== true)
-{currentHoveringBlock.addEventListener("dragstart", selectingPiece)
-currentHoveringBlock.appendChild(currentPieceClone)
+event.target.setAttribute('filled','')
+event.target.setAttribute('color',`${currentPieceColor}`)
+  event.target.addEventListener("click", selectingPiece);
+  
 
-}
-else{
-currentHoveringBlock.appendChild(currentPieceClone)
-currentPieceClone.style.opacity = "1"
-currentHoveringBlock.addEventListener("dragstart", selectingPiece)
-
-currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
-
-
-}
-
-if((event.target.getAttribute('data-piece') === 'whitePawn' || event.target.getAttribute('data-piece') === 'blackPawn') &&( currentHoveringBlock.getAttribute('data-row') === '0' || currentHoveringBlock.getAttribute('data-row') === '7'))
-{
-pawnUpgrade(currentHoveringBlock)
-
-}
-// pawn upgrade condition
-
-  // isKingInDanger()
-  // resetPossibleMoves()
-}
-
+  // pawn upgrade condition
+  if((event.target.getAttribute('data-piece') === 'whitePawn' || event.target.getAttribute('data-piece') === 'blackPawn') &&( event.target.getAttribute('data-row') === '0' || event.target.getAttribute('data-row') === '7'))
+  {
+  pawnUpgrade(event.target)
+  }
+  isKingInDanger()
+  resetPossibleMoves()
 };
 
- 
+
 
 
 function resetPossibleMoves() {
@@ -942,9 +809,7 @@ function resetPossibleMoves() {
   possibleMoves.forEach((item) => {
     item.classList.remove("possible");
     item.removeAttribute('conquer')
-    item.removeEventListener("dragend", pieceMovingToNextBlock);
-    if(!item.firstChild)
-    item.removeEventListener("dragstart", selectingPiece)
+    item.removeEventListener("click", pieceMovingToNextBlock);
   });
  
   possibleMoves = [];

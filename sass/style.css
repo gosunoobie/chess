@@ -10,7 +10,6 @@ body {
   justify-content: center;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
 }
 
 .chess-board {
@@ -29,6 +28,25 @@ body {
 .blackBlock {
   background: rgb(118, 150, 86);
   border: 1px solid black;
+}
+
+article {
+  min-width: 66px;
+  min-height: 66px;
+}
+
+div {
+  height: 66px;
+  width: 66px;
+}
+
+div[filled] {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+div[noevents] {
+  pointer-events: none;
 }
 
 div[data-piece=blackPawn] {
@@ -135,11 +153,11 @@ div[selected] {
   background: rgba(108, 154, 168, 0.5);
 }
 
-div[conquer] {
+article[conquer] {
   background-color: rgba(187, 45, 45, 0.5);
 }
 
-div[checkmate] {
+article[checkmate] {
   background-color: red;
 }
 

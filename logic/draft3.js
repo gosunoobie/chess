@@ -3,7 +3,7 @@ const boardLength = 8;
 let possibleMoves = [];
 let conquerMoves = [];
 let currentDraggingBlockWidth;
-let draggedItemClone;
+let isDragging = false;
 let currentHoveringBlock ;
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const lettersIn = {
@@ -23,26 +23,15 @@ let dy =0;
 let draggedItem;
 let selectingPiece = function selectingPieceFunc(event) {
   let selectedBlock = event.target;
-
-
+  isDragging = true
+  console.log("runnign start")
   currentDraggingBlockWidth = selectedBlock.offsetWidth;
 
-
-  // cloning the piece to drag
   dx = event.clientX - selectedBlock.getBoundingClientRect().x;
   dy = event.clientY - selectedBlock.getBoundingClientRect().y;
   draggedItem =selectedBlock
-   draggedItemClone = draggedItem.cloneNode(true);
-   draggedItemClone.setAttribute('noevents','')
-   selectedBlock.parentElement.appendChild(draggedItemClone)
-  draggedItemClone.style.position = 'absolute';
-
-  event.dataTransfer.setDragImage(event.target, window.outerWidth, window.outerHeight);
-draggedItem.style.opacity = '0'
-
-
-
-
+  selectedBlock.style.position = 'absolute';
+  console.log({selectedBlock,dx,dy,currentDraggingBlockWidth})
   if (currentPiece !== selectedBlock && currentPiece !== 0) {
     resetPossibleMoves();
   }
@@ -65,7 +54,7 @@ if(selectedPieceType)
   }
 
   selectedBlock = selectedBlock.parentElement;
-
+  console.log(selectedBlock)
   if(selectedPieceType === 'Rook'){
       rookPossibleMoves(selectedBlock)
   }
@@ -154,7 +143,7 @@ function createPiece(pieceType,pieceColor,boardBlock){
   actualPiece.setAttribute("data-piece", pieceType);
   actualPiece.setAttribute("filled", "");
   actualPiece.setAttribute('color',pieceColor)
-  actualPiece.setAttribute('draggable','true')
+  // actualPiece.setAttribute('draggable','true')
   boardBlock.appendChild(actualPiece)
 }
 
@@ -164,19 +153,23 @@ function createPiece(pieceType,pieceColor,boardBlock){
 
 function piecesEvents(boardBlock) {
   if(boardBlock.firstChild)
-  boardBlock.addEventListener('dragstart', selectingPiece)
+  boardBlock.addEventListener('mousedown', selectingPiece)
 
-  boardBlock.addEventListener("dragover", (e) => {
-    e.preventDefault();
+  boardBlock.addEventListener("mouseover", (e) => {
+    if(isDragging === false)
+    return;
+    // e.preventDefault();
+ console.log("running")
+    // return;
     let leftX = e.clientX -dx ;
     let topY = e.clientY -dy;
 
-    draggedItemClone.style.width = `${currentDraggingBlockWidth}px`
-    draggedItemClone.style.height = `${currentDraggingBlockWidth}px`
+    draggedItem.style.width = `${currentDraggingBlockWidth}px`
+    draggedItem.style.height = `${currentDraggingBlockWidth}px`
    
-    draggedItemClone.style.left = `${leftX}px`
-    draggedItemClone.style.top = `${topY}px`
-    
+    draggedItem.style.left = `${leftX}px`
+    draggedItem.style.top = `${topY}px`
+ 
 
       if(e.target.hasAttribute('filled'))
       { currentHoveringBlock = e.target.parentElement;
@@ -185,7 +178,7 @@ function piecesEvents(boardBlock) {
       
       currentHoveringBlock =e.target;
 
-
+      console.log(currentHoveringBlock)
 
    //
         // boardBlock.addEventListener('dragover',draggingPiece)
@@ -217,14 +210,14 @@ function pawnPossibleMoves(selectedBlock, selectedPieceType) {
     selectedBlockId = parseInt(selectedBlockId);
     possibleMoves.push(selectedBlock.parentElement)
     let nextBlock;
-    
+    console.log({selectedBlockId})
     let currentColumn;
     if (selectedPieceType === "whitePawn") {
       nextBlock = document.querySelector(
         `[data-id="${selectedBlockId - boardLength}"]`
      
         );
-   
+        console.log({nextBlock})
   if(nextBlock.firstChild)
   return;
       possibleMoves.push(nextBlock);
@@ -253,7 +246,7 @@ function pawnConquerPossibleMoves(nextBlock,currentColumn){
 
   
 if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
-
+  console.log({nextBlock,currentPiece})
   if(nextBlock.previousElementSibling.firstChild.getAttribute('color')===currentPiece.getAttribute('color'))
 
   return 
@@ -272,7 +265,7 @@ if(currentColumn<7&& nextBlock.nextElementSibling.firstChild){
 
 
 function pawnUpgrade(currentBlock){
- 
+  console.log('running')
   let container = document.querySelector('.piece-selection-container')  
   let containerWrapper = document.querySelector('.container-wrapper')
   let options = container.querySelectorAll('.piece-option')
@@ -336,11 +329,12 @@ let rows = parseInt(currentRow)+1
 let  column = lettersIn[currentColumn]+2
 
 let currentPieceType =  currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
-
+console.log({currentPieceType})
 while(rows<initialrows+3&&column>=initialcolumn){
 
   let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
-
+console.log({column,rows})
+console.log({nextBlock})
 if(!nextBlock)
     {
       rows++;
@@ -352,7 +346,7 @@ if(!nextBlock)
 
 
         nextBlock.setAttribute('conquer','')
-
+console.log({nextBlock},"checking")
         let nextPieceType = nextBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
         let nextPieceColor = nextBlock.firstChild.getAttribute('color')
         if((nextPieceType === 'Knight')&& currentBlock.getAttribute('color') !== nextPieceColor)
@@ -361,6 +355,7 @@ if(!nextBlock)
         
       
     }
+    console.log("pushing",nextBlock)
     possibleMoves.push(nextBlock)
     rows++;
     column--;
@@ -477,7 +472,7 @@ while(rows>initialrows-3&&column<=initialcolumn){
 //     return
 //   }
 // })
-
+console.log({possibleMoves})
 possibleMoves.push(currentBlock)
 
 addingEventsInPossibleMoves(possibleMoves)
@@ -661,7 +656,7 @@ function rookPossibleMoves(currentBlock){
    let currentRow = currentBlock.getAttribute("data-row")
    let currentColumn = currentBlock.getAttribute("data-column")
    let currentPieceType = currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','');
- 
+   console.log(currentPieceType)
 let rows = parseInt(currentRow)
 let currentPieceRow = rows;
 let  column = lettersIn[currentColumn]
@@ -876,7 +871,7 @@ currentColumn = lettersIn[currentColumn]
 
   possibleMoves.forEach((item) => {
 
-    item.addEventListener("dragend", pieceMovingToNextBlock);
+    item.addEventListener("mouseup", pieceMovingToNextBlock);
     item.classList.add("possible");
   });
 }
@@ -886,11 +881,8 @@ currentColumn = lettersIn[currentColumn]
 let pieceMovingToNextBlock = function pieceMovingToNextBlockFunc
 (event) {
 let isEmpty = true;
+isDragging = false;
 
-draggedItemClone.parentElement.removeChild(draggedItemClone)
-
-
-currentPiece.style.opacity = "1"
 if(currentHoveringBlock.firstChild === currentPiece)
 return
   if((currentHoveringBlock.classList.contains('possible'))||(currentHoveringBlock.parentElement.classList.contains('possible'))){  
@@ -899,26 +891,25 @@ return
     
     if(currentHoveringBlock.firstChild)
     isEmpty = false;
- 
+   
 
-let  currentPieceClone = currentPiece.cloneNode(true);
+let  courrentPieceClone = currentPiece.cloneNode(true);
 
 
 event.target.parentElement.removeChild(currentPiece) 
 resetPossibleMoves()
 if(isEmpty=== true)
-{currentHoveringBlock.addEventListener("dragstart", selectingPiece)
-currentHoveringBlock.appendChild(currentPieceClone)
+{currentHoveringBlock.addEventListener("mousedown", selectingPiece)
+currentHoveringBlock.appendChild(courrentPieceClone)
 
 }
 else{
-currentHoveringBlock.appendChild(currentPieceClone)
-currentPieceClone.style.opacity = "1"
-currentHoveringBlock.addEventListener("dragstart", selectingPiece)
+currentHoveringBlock.appendChild(courrentPieceClone)
+currentHoveringBlock.addEventListener("mousedown", selectingPiece)
 
 currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
 
-
+console.log(currentHoveringBlock.firstChild)
 }
 
 if((event.target.getAttribute('data-piece') === 'whitePawn' || event.target.getAttribute('data-piece') === 'blackPawn') &&( currentHoveringBlock.getAttribute('data-row') === '0' || currentHoveringBlock.getAttribute('data-row') === '7'))
@@ -942,9 +933,9 @@ function resetPossibleMoves() {
   possibleMoves.forEach((item) => {
     item.classList.remove("possible");
     item.removeAttribute('conquer')
-    item.removeEventListener("dragend", pieceMovingToNextBlock);
+    item.removeEventListener("mouseup", pieceMovingToNextBlock);
     if(!item.firstChild)
-    item.removeEventListener("dragstart", selectingPiece)
+    item.removeEventListener("mousedown", selectingPiece)
   });
  
   possibleMoves = [];
