@@ -32,13 +32,18 @@ let selectingPiece = function selectingPieceFunc(event) {
   dx = event.clientX - selectedBlock.getBoundingClientRect().x;
   dy = event.clientY - selectedBlock.getBoundingClientRect().y;
   draggedItem =selectedBlock
+  
    draggedItemClone = draggedItem.cloneNode(true);
    draggedItemClone.setAttribute('noevents','')
    selectedBlock.parentElement.appendChild(draggedItemClone)
   draggedItemClone.style.position = 'absolute';
-
+  let leftX = event.clientX -dx ;
+  let topY = event.clientY -dy;
+  draggedItemClone.style.left = `${leftX}px`
+  draggedItemClone.style.top = `${topY}px`
+  draggedItem.style.opacity = '0'
   event.dataTransfer.setDragImage(event.target, window.outerWidth, window.outerHeight);
-draggedItem.style.opacity = '0'
+
 
 
 
@@ -101,6 +106,14 @@ function createBoard() {
       } else {
         boardBlock.classList.add("blackBlock");
       }
+      boardBlock.addEventListener('dragleave',(e)=>{
+      e.target.removeAttribute('hovering')
+      })
+      boardBlock.addEventListener('dragend',(e)=>{
+        console.log("done hovering",e.target)
+        currentHoveringBlock.removeAttribute('hovering')
+        })
+  
 
       chessBoard.append(boardBlock);
 
@@ -165,7 +178,7 @@ function createPiece(pieceType,pieceColor,boardBlock){
 function piecesEvents(boardBlock) {
   if(boardBlock.firstChild)
   boardBlock.addEventListener('dragstart', selectingPiece)
-
+  
   boardBlock.addEventListener("dragover", (e) => {
     e.preventDefault();
     let leftX = e.clientX -dx ;
@@ -177,13 +190,17 @@ function piecesEvents(boardBlock) {
     draggedItemClone.style.left = `${leftX}px`
     draggedItemClone.style.top = `${topY}px`
     
-
+// setTimeout(()=>{
+//   draggedItemClone.style.opacity = '1';
+// },1)
       if(e.target.hasAttribute('filled'))
       { currentHoveringBlock = e.target.parentElement;
     return
       }
       
       currentHoveringBlock =e.target;
+
+      currentHoveringBlock.setAttribute("hovering",'')
 
 
 

@@ -31,13 +31,14 @@ body {
 }
 
 article {
-  min-width: 66px;
-  min-height: 66px;
+  width: 68.25px;
+  height: 68.25px;
+  transition: box-shadow 0.25s ease-in-out;
 }
 
 div {
-  height: 66px;
-  width: 66px;
+  height: 68.25px;
+  width: 68.25px;
 }
 
 div[filled] {
@@ -54,7 +55,6 @@ div[data-piece=blackPawn] {
   background-size: 30px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=blackRook] {
@@ -62,7 +62,6 @@ div[data-piece=blackRook] {
   background-size: 37.5px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=blackKnight] {
@@ -70,7 +69,6 @@ div[data-piece=blackKnight] {
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=blackBishop] {
@@ -78,7 +76,6 @@ div[data-piece=blackBishop] {
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=blackQueen] {
@@ -86,7 +83,6 @@ div[data-piece=blackQueen] {
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=blackKing] {
@@ -94,7 +90,6 @@ div[data-piece=blackKing] {
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=whitePawn] {
@@ -102,7 +97,6 @@ div[data-piece=whitePawn] {
   background-size: 30px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=whiteRook] {
@@ -110,7 +104,6 @@ div[data-piece=whiteRook] {
   background-size: 37.5px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=whiteKnight] {
@@ -118,7 +111,6 @@ div[data-piece=whiteKnight] {
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=whiteBishop] {
@@ -126,7 +118,6 @@ div[data-piece=whiteBishop] {
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=whiteQueen] {
@@ -134,7 +125,6 @@ div[data-piece=whiteQueen] {
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[data-piece=whiteKing] {
@@ -142,23 +132,18 @@ div[data-piece=whiteKing] {
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.25s ease-in-out;
 }
 
 div[selected] {
   background-size: 40px;
 }
 
-.possible {
-  background: rgba(108, 154, 168, 0.5);
-}
-
 article[conquer] {
-  background-color: rgba(187, 45, 45, 0.5);
+  box-shadow: 0px 0px 0px 4px red inset;
 }
 
 article[checkmate] {
-  background-color: red;
+  border: 5px solid red;
 }
 
 .piece-selection-container {
@@ -192,4 +177,8 @@ article[checkmate] {
   border: 2px solid black;
   font-size: 1.125rem;
   font-weight: 600;
+}
+
+article[hovering] {
+  box-shadow: 0px 0px 0px 4px black inset;
 }/*# sourceMappingURL=style.css.map */
