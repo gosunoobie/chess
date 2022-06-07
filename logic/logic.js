@@ -73,7 +73,7 @@ console.log(selectedBlock.parentElement,"king position")
   }
 
   let selectedPieceType = selectedBlock.getAttribute("data-piece");
-
+ let selectedPieceColor  = selectedBlock.getAttribute('color')
   if (currentPiece === selectedBlock) return;
 
 
@@ -82,7 +82,7 @@ console.log(selectedBlock.parentElement,"king position")
 
 
   if (selectedPieceType === "whitePawn" || selectedPieceType === "blackPawn") {
-    pawnPossibleMoves(selectedBlock, selectedPieceType);
+    pawnPossibleMoves(selectedBlock);
     return;
   }
  
@@ -147,34 +147,34 @@ function createBoard() {
       chessBoard.append(boardBlock);
 
       if (boardId === 49) {
-     createPiece('whiteRook','white',boardBlock)
+     createPiece('whitePawn','white',boardBlock)
       }
 
       if (boardId === 1) {
 
-        createPiece('blackRook','black',boardBlock)    
+        createPiece('blackQueen','black',boardBlock)    
       }
       if (boardId === 6) {
-        createPiece('blackBishop','black',boardBlock)  
+        createPiece('blackRook','black',boardBlock)  
       }
 
       if (boardId === 8) {
-        createPiece('blackKnight','black',boardBlock)  
+        createPiece('blackPawn','black',boardBlock)  
       }
       if (boardId === 45) {
-        createPiece('blackPawn','black',boardBlock)  
+        createPiece('whitePawn','white',boardBlock)  
       }
       if (boardId === 10) {
         createPiece('blackKing','black',boardBlock)  
       }
       if (boardId === 44) {
-        createPiece('whiteBishop','white',boardBlock)  
+        createPiece('whitePawn','white',boardBlock)  
       }
       if (boardId === 12) {
   
       }
       if (boardId === 20) {
-        createPiece('blackQueen','black',boardBlock) 
+        createPiece('blackPawn','black',boardBlock) 
       }
       if (boardId === 27) {
    
@@ -263,14 +263,15 @@ return
 
 // For the Pawn 
 
-function pawnPossibleMoves(selectedBlock, selectedPieceType) {
+function pawnPossibleMoves(selectedBlock) {
     selectedBlockId = selectedBlock.parentElement.getAttribute("data-id");
     selectedBlockId = parseInt(selectedBlockId);
+    selectedPieceColor = selectedBlock.getAttribute('color')
     possibleMoves.push(selectedBlock.parentElement)
     let nextBlock;
     
     let currentColumn;
-    if (selectedPieceType === "whitePawn") {
+    if (selectedPieceColor === "white") {
       nextBlock = document.querySelector(
         `[data-id="${selectedBlockId - boardLength}"]`
      
@@ -281,10 +282,10 @@ function pawnPossibleMoves(selectedBlock, selectedPieceType) {
       possibleMoves.push(nextBlock);
   
       currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
-    pawnConquerPossibleMoves(nextBlock,currentColumn)
+    pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
     }
   
-    if (selectedPieceType === "blackPawn") {
+    if (selectedPieceColor === "black") {
       nextBlock = document.querySelector(
         `[data-id="${selectedBlockId + boardLength}"]`
       );
@@ -292,15 +293,15 @@ function pawnPossibleMoves(selectedBlock, selectedPieceType) {
       return;
       possibleMoves.push(nextBlock);
       currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
-      pawnConquerPossibleMoves(nextBlock,currentColumn)
+      pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
     }
   
     addingEventsInPossibleMoves(possibleMoves);
   }
   
 
-function pawnConquerPossibleMoves(nextBlock,currentColumn){
-
+function pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock){
+console.log('entered this event',nextBlock,selectedBlock)
 
   
 if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
@@ -308,14 +309,27 @@ if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
   if(nextBlock.previousElementSibling.firstChild.getAttribute('color')===currentPiece.getAttribute('color'))
 
   return 
+
+  console.log("reached level 2")
   possibleMoves.push(nextBlock.previousElementSibling)
-    nextBlock.previousElementSibling.setAttribute('conquer','')
+if(nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whiteKing"||nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whiteBlack")
+ { attackingBlocks.push(selectedBlock.parentElement)
+  console.log('done blockable',selectedBlock.parentElement)
+  nextBlock.previousElementSibling.setAttribute('checkmate','') 
+}
+  nextBlock.previousElementSibling.setAttribute('conquer','')
 }
 if(currentColumn<7&& nextBlock.nextElementSibling.firstChild){
+
 
   if(nextBlock.nextElementSibling.firstChild.getAttribute('color') === currentPiece.getAttribute('color'))
   return
     possibleMoves.push(nextBlock.nextElementSibling)
+    if(nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whiteKing"||nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whiteBlack")
+    { attackingBlocks.push(selectedBlock.parentElement)
+      console.log('done blockable',selectedBlock.parentElement)
+    nextBlock.nextElementSibling.setAttribute('checkmate','') 
+   }
     nextBlock.nextElementSibling.setAttribute('conquer','')
 }
 
@@ -576,9 +590,10 @@ console.log({currentBlock,nextBlock})
       let nextPieceColor = nextBlock.getAttribute('color')
   
   
-      if(rows===currentPieceRow+1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
+      if(rows===currentPieceRow+1 && (nextPieceType === "King"||nextPieceTypeInitial === "whitePawn") && nextPieceColor !== currentBlock.firstChild.getAttribute('color')){
         if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
   currentBlock.setAttribute('checkmate','') }  
+      
 
 
 
@@ -617,9 +632,10 @@ while(rows<8&&column<8){
     let nextPieceColor = nextBlock.getAttribute('color')
 
 
-    if(rows===currentPieceRow+1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
+    if(rows===currentPieceRow+1 && (nextPieceType === "King"||nextPieceTypeInitial === "whitePawn") && nextPieceColor !== currentBlock.firstChild.getAttribute('color')){
       if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
 currentBlock.setAttribute('checkmate','') }  
+     
     
     if(!(currentPieceType === "King"))
     nextBlock.parentElement.setAttribute('conquer','')
@@ -660,7 +676,8 @@ while(rows>=0&&column>=0){
     let nextPieceType = nextPieceTypeInitial.replace('white','').replace('black','')
     let nextPieceColor = nextBlock.getAttribute('color')
 
-    if(rows===currentPieceRow-1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
+
+    if(rows===currentPieceRow-1 && (nextPieceType === "King"||nextPieceTypeInitial === "blackPawn") && nextPieceColor !== currentBlock.firstChild.getAttribute('color')){
       if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
 currentBlock.setAttribute('checkmate','') }  
     
@@ -702,9 +719,10 @@ while(rows>=0&&column<8){
     let nextPieceColor = nextBlock.getAttribute('color')
 
 
-    if(rows===currentPieceRow-1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
+    if(rows===currentPieceRow-1 && (nextPieceType === "King"||nextPieceTypeInitial === "blackPawn") && nextPieceColor !== currentBlock.firstChild.getAttribute('color')){
       if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
 currentBlock.setAttribute('checkmate','') }  
+    
     
     if(!(currentPieceType === "King"))
     nextBlock.parentElement.setAttribute('conquer','')
@@ -994,8 +1012,7 @@ function isKingInDanger(){
    let   whiteKingBlock = whiteKing.parentElement
 queenPossibleMoves(whiteKingBlock)
 knightPossibleMoves(whiteKingBlock)
-
-
+pawnPossibleMoves(whiteKingBlock.firstChild);
 if(whiteKingBlock.hasAttribute('checkmate'))
 isWhiteKingInDanger = true;
 else
@@ -1009,7 +1026,7 @@ isWhiteKingInDanger = false;
 
 queenPossibleMoves(blackKingBlock)
 knightPossibleMoves(blackKingBlock)
-
+pawnPossibleMoves(blackKingBlock.firstChild);
 if(blackKingBlock.hasAttribute('checkmate'))
 isBlackKingInDanger = true;
 else
@@ -1338,6 +1355,15 @@ let lastchecks = document.querySelectorAll(`[checkmate= '']`)
 lastchecks.forEach(item=>{
   item.removeAttribute('checkmate')
 })
+
+
+if(isWhiteKingInDanger === false && isBlackKingInDanger === false){
+attackingBlocks.forEach(item=>{
+item.removeAttribute('blockable')
+
+})
+attackingBlocks = []
+}
 isWhitePlayerTurn = isWhitePlayerTurn === true ? false : true;
 console.log({isWhitePlayerTurn,isBlackKingInDanger})
 
