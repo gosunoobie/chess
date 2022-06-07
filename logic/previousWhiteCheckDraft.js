@@ -6,7 +6,6 @@ let currentDraggingBlockWidth;
 let draggedItemClone;
 let currentHoveringBlock ;
 let isWhiteKingInDanger = false;
-let isBlackKingInDanger = false;
 let isWhitePlayerTurn =  true;
 let attackingBlocks = [];
 let isSimilar = false;
@@ -109,12 +108,11 @@ if(selectedPieceType === 'Queen'){
 if(selectedPieceType === 'King'){
   kingPossibleMoves(selectedBlock)
 }
-if(isWhiteKingInDanger === true || isBlackKingInDanger === true)
+if(isWhiteKingInDanger === true)
 {isAttackDefendable()
 return;
 }
 isWhiteKingInDanger = false;
-isBlackKingInDanger = false;
 
 
 };
@@ -165,7 +163,7 @@ function createBoard() {
         createPiece('blackPawn','black',boardBlock)  
       }
       if (boardId === 10) {
-        createPiece('blackKing','black',boardBlock)  
+        createPiece('blackPawn','black',boardBlock)  
       }
       if (boardId === 44) {
         createPiece('whiteBishop','white',boardBlock)  
@@ -992,35 +990,22 @@ queenPossibleMoves(currentBlock)
 
 
 function isKingInDanger(){
-
-
+  // let blackKing = document.querySelector(`[data-piece="blackKing"]`)
 
   let whiteKing = document.querySelector(`[data-piece="whiteKing"]`)
-   let   whiteKingBlock = whiteKing.parentElement
+  // let  blackKingBlock = blackKing.parentElement;
+ let   whiteKingBlock = whiteKing.parentElement
+
+
 queenPossibleMoves(whiteKingBlock)
 knightPossibleMoves(whiteKingBlock)
-
 
 if(whiteKingBlock.hasAttribute('checkmate'))
 isWhiteKingInDanger = true;
 else
 isWhiteKingInDanger = false;
-
-
-
-    let blackKing = document.querySelector(`[data-piece="blackKing"]`)
-  let  blackKingBlock = blackKing.parentElement;
-
-
-queenPossibleMoves(blackKingBlock)
-knightPossibleMoves(blackKingBlock)
-
-if(blackKingBlock.hasAttribute('checkmate'))
-isBlackKingInDanger = true;
-else
-isBlackKingInDanger = false;
-
-
+// queenPossibleMoves(blackKing)
+// knightPossibleMoves(blackKing)
 }
 
 function isAttackDefendable(){
@@ -1054,7 +1039,7 @@ return;
 
 
   isWhiteKingInDanger = false;
-isBlackKingInDanger = false;
+
 
 // attackingBlocks = attackingBlocks.map(items=>{
 // if(items.classList.contains("possible"))
@@ -1165,8 +1150,6 @@ if(draggedItemClone.parentElement)
 draggedItemClone.parentElement.removeChild(draggedItemClone)
 
 currentPiece.style.opacity = "1"
-if(!currentHoveringBlock)
-return
 if(currentHoveringBlock.firstChild === currentPiece)
 return
 
@@ -1198,11 +1181,11 @@ currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
 
 
 }
-if((isSimilar === true && currentHoveringBlock.hasAttribute('blockable')) && ((currentPiece.getAttribute('data-piece') !== 'whiteKing')|| (currentPiece.getAttribute('data-piece') !== 'blackKing')))
-{   let lastchecks = document.querySelectorAll(`[checkmate= '']`)
-lastchecks.forEach(item=>{
-  item.removeAttribute('checkmate')
-})
+if((isSimilar === true && currentHoveringBlock.hasAttribute('blockable')) && currentPiece.getAttribute('data-piece') !== 'whiteKing')
+{  let whiteKing = document.querySelector(`[data-piece="whiteKing"]`)
+whiteKing.parentElement.removeAttribute('checkmate')
+  resetPossibleMoves()
+  currentPieceBlock.removeAttribute('checkmate')
   isWhitePlayerTurn = isWhitePlayerTurn === true ? false : true;
   
   
@@ -1211,7 +1194,6 @@ lastchecks.forEach(item=>{
     item.removeAttribute('blockable')
   })
   isWhiteKingInDanger = false
-  isBlackKingInDanger = false;
   return
 }
 // pawn upgrade condition
@@ -1237,10 +1219,9 @@ pawnUpgrade(currentHoveringBlock)
   isWhiteKingInDanger = false;
   isKingInDanger()
   resetPossibleMoves()
-  let lastchecks = document.querySelectorAll(`[checkmate= '']`)
-  lastchecks.forEach(item=>{
-    item.removeAttribute('checkmate')
-  })
+  let whiteKing = document.querySelector(`[data-piece="whiteKing"]`)
+if(whiteKing.parentElement)
+whiteKing.parentElement.removeAttribute('checkmate')
   let tempClone = currentPieceClone.cloneNode(true)
   tempClone.addEventListener('dragstart',selectingPiece)
   currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
@@ -1278,59 +1259,6 @@ isWhitePlayerTurn = true
 return
 
   }
-
-  if(((isBlackKingInDanger === true && isWhitePlayerTurn === false)
-  && (!currentHoveringBlock.hasAttribute('blockable') )
-  ) || ((isBlackKingInDanger === true && isWhitePlayerTurn === false)&&(currentHoveringBlock.hasAttribute('blockable')&&currentPiece.getAttribute('data-piece')))
-  
-  ){
-    console.log('this should be running')
-   isBlackKingInDanger = false;
-   isKingInDanger()
-   resetPossibleMoves()
-   let lastchecks = document.querySelectorAll(`[checkmate= '']`)
-   lastchecks.forEach(item=>{
-     item.removeAttribute('checkmate')
-   })
-   let tempClone = currentPieceClone.cloneNode(true)
-   tempClone.addEventListener('dragstart',selectingPiece)
-   currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
-    if(isEmpty === true){
- 
-  
- 
-    currentPieceBlock.appendChild(tempClone);
-    currentHoveringBlock.removeAttribute('checkmate')
- 
- 
-   //  isWhiteKingInDanger = true
- 
-    isWhitePlayerTurn = false
- 
-    return;
- }
- console.log({currentPieceBlock,nextPieceBlock})
- // currentPieceBlock.removeChild(currentPieceBlock.firstChild)
- 
- 
- 
- currentPieceBlock.appendChild(tempClone)
- currentHoveringBlock.appendChild(nextPieceBlock.firstChild)
- // currentHoveringBlock.removeAttribute('checkmate')
- // currentPieceBlock.removeAttribute('checkmate')
- // 
- 
- console.log('is this one')
- // isWhiteKingInDanger = true
- isKingInDanger()
- resetPossibleMoves()
- console.log({isBlackKingInDanger},'checking')
- isWhitePlayerTurn = false
- return
- 
-   }
-
-
 }
 
 else{
@@ -1339,12 +1267,9 @@ else{
   return
   // resetPossibleMoves();
 }
-let lastchecks = document.querySelectorAll(`[checkmate= '']`)
-lastchecks.forEach(item=>{
-  item.removeAttribute('checkmate')
-})
+currentPieceBlock.removeAttribute('checkmate')
 isWhitePlayerTurn = isWhitePlayerTurn === true ? false : true;
-console.log({isWhitePlayerTurn,isBlackKingInDanger})
+console.log({isWhitePlayerTurn,isWhiteKingInDanger})
 
 };
 
@@ -1354,11 +1279,6 @@ console.log({isWhitePlayerTurn,isBlackKingInDanger})
 function resetPossibleMoves() {
 
 console.log("reseting")
-
-let allBlocks = document.querySelectorAll('.possible')
-allBlocks.forEach(item=>{
-  item.classList.remove("possible")
-})
   possibleMoves.forEach((item) => {
     item.classList.remove("possible");
     item.removeAttribute('conquer')
