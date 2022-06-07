@@ -617,11 +617,9 @@ while(rows<8&&column<8){
     let nextPieceColor = nextBlock.getAttribute('color')
 
 
-    if(rows===currentPieceRow+1 &&(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color'))){
+    if(rows===currentPieceRow+1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
       if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
-      currentBlock.setAttribute('checkmate','')   
-    
-    }
+currentBlock.setAttribute('checkmate','') }  
     
     if(!(currentPieceType === "King"))
     nextBlock.parentElement.setAttribute('conquer','')
@@ -662,11 +660,9 @@ while(rows>=0&&column>=0){
     let nextPieceType = nextPieceTypeInitial.replace('white','').replace('black','')
     let nextPieceColor = nextBlock.getAttribute('color')
 
-
-    if(rows===currentPieceRow-1 && (nextPieceTypeInitial === "blackPawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color'))){
+    if(rows===currentPieceRow-1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
       if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
-      currentBlock.setAttribute('checkmate','')   
-    }
+currentBlock.setAttribute('checkmate','') }  
     
     if(!(currentPieceType === "King"))
     nextBlock.parentElement.setAttribute('conquer','')
@@ -706,10 +702,9 @@ while(rows>=0&&column<8){
     let nextPieceColor = nextBlock.getAttribute('color')
 
 
-    if(rows===currentPieceRow-1 && (nextPieceTypeInitial === "blackPawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color'))){
+    if(rows===currentPieceRow-1 && (nextPieceType === "King"||(nextPieceTypeInitial === "whitePawn" && nextPieceColor !== currentBlock.firstChild.getAttribute('color')))){
       if(!(currentPieceType === "Bishop" || currentPieceType ==="Queen"))
-      currentBlock.setAttribute('checkmate','')   
-    }
+currentBlock.setAttribute('checkmate','') }  
     
     if(!(currentPieceType === "King"))
     nextBlock.parentElement.setAttribute('conquer','')
