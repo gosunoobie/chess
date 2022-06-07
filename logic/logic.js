@@ -147,7 +147,7 @@ function createBoard() {
       chessBoard.append(boardBlock);
 
       if (boardId === 49) {
-     createPiece('whitePawn','white',boardBlock)
+     createPiece('whiteKnight','white',boardBlock)
       }
 
       if (boardId === 1) {
@@ -159,22 +159,22 @@ function createBoard() {
       }
 
       if (boardId === 8) {
-        createPiece('blackPawn','black',boardBlock)  
+        createPiece('blackKnight','black',boardBlock)  
       }
       if (boardId === 45) {
-        createPiece('whitePawn','white',boardBlock)  
+        createPiece('whiteKnight','white',boardBlock)  
       }
       if (boardId === 10) {
         createPiece('blackKing','black',boardBlock)  
       }
       if (boardId === 44) {
-        createPiece('whitePawn','white',boardBlock)  
+        createPiece('whiteKnight','white',boardBlock)  
       }
       if (boardId === 12) {
   
       }
       if (boardId === 20) {
-        createPiece('blackPawn','black',boardBlock) 
+        createPiece('blackKnight','black',boardBlock) 
       }
       if (boardId === 27) {
    
@@ -313,7 +313,7 @@ if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
   console.log("reached level 2")
   possibleMoves.push(nextBlock.previousElementSibling)
 if(nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whiteKing"||nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whiteBlack")
- { attackingBlocks.push(selectedBlock.parentElement)
+ { attackingBlocks.push(currentPieceBlock)
   console.log('done blockable',selectedBlock.parentElement)
   nextBlock.previousElementSibling.setAttribute('checkmate','') 
 }
@@ -326,7 +326,7 @@ if(currentColumn<7&& nextBlock.nextElementSibling.firstChild){
   return
     possibleMoves.push(nextBlock.nextElementSibling)
     if(nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whiteKing"||nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whiteBlack")
-    { attackingBlocks.push(selectedBlock.parentElement)
+    { attackingBlocks.push(currentPieceBlock)
       console.log('done blockable',selectedBlock.parentElement)
     nextBlock.nextElementSibling.setAttribute('checkmate','') 
    }
@@ -422,9 +422,10 @@ if(!nextBlock)
         let nextPieceColor = nextBlock.firstChild.getAttribute('color')
         if(currentBlock.firstChild)
         if((nextPieceType === 'Knight')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
-        if(currentPieceType === "King")
+        if(currentPieceType === "King"){
+                  attackingBlocks.push(nextBlock)
          currentBlock.setAttribute('checkmate','')
-        
+        }
       
     }
     possibleMoves.push(nextBlock)
@@ -458,9 +459,10 @@ while(rows<initialrows+3&&column<=initialcolumn){
         let nextPieceColor = nextBlock.firstChild.getAttribute('color')
         if(currentBlock.firstChild)
         if((nextPieceType === 'Knight')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
-        if(currentPieceType === "King")
-         currentBlock.setAttribute('checkmate','')
-        
+        if(currentPieceType === "King"){
+          attackingBlocks.push(nextBlock)
+ currentBlock.setAttribute('checkmate','')
+}
     }
     possibleMoves.push(nextBlock)
     rows++;
@@ -491,10 +493,13 @@ while(rows>initialrows-3&&column>=initialcolumn){
       let nextPieceColor = nextBlock.firstChild.getAttribute('color')
       if(currentBlock.firstChild)
       if((nextPieceType === 'Knight')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
-      if(currentPieceType === "King")
-       currentBlock.setAttribute('checkmate','')
+      if(currentPieceType === "King"){
+        attackingBlocks.push(nextBlock)
+currentBlock.setAttribute('checkmate','')
+}
       
     }
+    
     possibleMoves.push(nextBlock)
     rows--;
     column--;
@@ -525,10 +530,11 @@ while(rows>initialrows-3&&column<=initialcolumn){
     let nextPieceType = nextBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
     let nextPieceColor = nextBlock.firstChild.getAttribute('color')
     if(currentBlock.firstChild)
-    if((nextPieceType === 'Knight')&& currentBlock.firstChild
-.getAttribute('color') !== nextPieceColor)
-    if(currentPieceType === "King")
-     currentBlock.setAttribute('checkmate','')
+    if((nextPieceType === 'Knight')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
+    if(currentPieceType === "King"){
+      attackingBlocks.push(nextBlock)
+currentBlock.setAttribute('checkmate','')
+}
   }
   possibleMoves.push(nextBlock)
   rows--;
