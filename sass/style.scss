@@ -13,21 +13,23 @@ body{
 }
 .chess-board{
   
-    border: 2px solid black;
+    // border: 10px solid gray;
     width: 550px;
     height: 550px;
     display: grid;
     grid-template-columns: repeat(8,1fr);
+    border-collapse: separate; 
+    border-radius: 15px ;
     
 }
 
 .whiteBlock{
     background: rgb(238,238,210);
-    border: 1px solid black;
+    // border: 1px solid black;
 }
 .blackBlock{
     background: rgb(118,150,86);
-    border: 1px solid black;
+    // border: 1px solid black;
 }
 article{
     width: 68.25px;
@@ -138,11 +140,12 @@ background-position: center;
 div[selected]{
 background-size: 40px;
 }
-// .possible{
-//     background:rgba(108, 154, 168,0.5);
+.possible{
+    background:rgba(108, 154, 168,0.5);
+    // box-shadow:0px 0px 0px 6px rgba(58, 178, 215, 0.5) inset;
 
     
-// }
+}
 // .possible::after{
 //     position: absolute;
 //     content: "";
@@ -157,13 +160,13 @@ background-size: 40px;
 // }
 article[conquer]{
     // background-color: rgba(187, 45, 45,0.5);
-    box-shadow:0px 0px 0px 4px red inset;
+    box-shadow:0px 0px 0px 6px #f05974 inset;
     
 }
 
 article[checkmate]{
     // background-color: red;
-    border: 5px solid red;
+    box-shadow:0px 0px 0px 6px red inset;
 }
 
 .piece-selection-container{
@@ -200,5 +203,5 @@ display: none;
 }
 
 article[hovering]{
-      box-shadow:0px 0px 0px 4px black inset;
+      box-shadow:0px 0px 0px 6px black inset;
 }
