@@ -155,32 +155,35 @@ function createBoard() {
         createPiece('blackQueen','black',boardBlock)    
       }
       if (boardId === 6) {
-        createPiece('blackRook','black',boardBlock)  
+        createPiece('blackPawn','black',boardBlock)  
       }
 
-      if (boardId === 8) {
-        createPiece('blackKnight','black',boardBlock)  
+      if (boardId === 48) {
+        createPiece('whiteKing','white',boardBlock)  
       }
       if (boardId === 45) {
-        createPiece('whiteKnight','white',boardBlock)  
+        createPiece('whitePawn','white',boardBlock)  
+      }
+      if (boardId === 43) {
+        createPiece('whitePawn','white',boardBlock)  
       }
       if (boardId === 10) {
         createPiece('blackKing','black',boardBlock)  
       }
       if (boardId === 44) {
-        createPiece('whiteKnight','white',boardBlock)  
+        createPiece('whitePawn','white',boardBlock)  
       }
       if (boardId === 12) {
   
       }
       if (boardId === 20) {
-        createPiece('blackKnight','black',boardBlock) 
+        createPiece('blackPawn','black',boardBlock) 
       }
       if (boardId === 27) {
    
       }
       if (boardId === 14) {
-        createPiece('whiteKing','white',boardBlock) 
+        createPiece('whitePawn','white',boardBlock) 
       }
 
       piecesEvents(boardBlock);
@@ -276,12 +279,18 @@ function pawnPossibleMoves(selectedBlock) {
         `[data-id="${selectedBlockId - boardLength}"]`
      
         );
+        currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
    
-  if(nextBlock.firstChild)
-  return;
+  if(nextBlock.firstChild){
+
+    pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
+    addingEventsInPossibleMoves(possibleMoves);
+    return;
+  }
+ 
       possibleMoves.push(nextBlock);
   
-      currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
+
     pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
     }
   
@@ -289,13 +298,19 @@ function pawnPossibleMoves(selectedBlock) {
       nextBlock = document.querySelector(
         `[data-id="${selectedBlockId + boardLength}"]`
       );
-      if(nextBlock.firstChild)
-      return;
-      possibleMoves.push(nextBlock);
       currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
+      if(nextBlock.firstChild){
+    
+        pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
+        addingEventsInPossibleMoves(possibleMoves);
+        return;
+      }
+     
+      possibleMoves.push(nextBlock);
+ 
       pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
     }
-  
+  // console.log('yhis level cnt ')
     addingEventsInPossibleMoves(possibleMoves);
   }
   
@@ -312,25 +327,27 @@ if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
 
   console.log("reached level 2")
   possibleMoves.push(nextBlock.previousElementSibling)
-if(nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whiteKing"||nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whiteBlack")
+if(nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whitePawn"||nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="blackPawn")
  { attackingBlocks.push(currentPieceBlock)
   console.log('done blockable',selectedBlock.parentElement)
-  nextBlock.previousElementSibling.setAttribute('checkmate','') 
+  // nextBlock.previousElementSibling.setAttribute('checkmate','') 
 }
   nextBlock.previousElementSibling.setAttribute('conquer','')
 }
 if(currentColumn<7&& nextBlock.nextElementSibling.firstChild){
 
-
   if(nextBlock.nextElementSibling.firstChild.getAttribute('color') === currentPiece.getAttribute('color'))
   return
-    possibleMoves.push(nextBlock.nextElementSibling)
-    if(nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whiteKing"||nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whiteBlack")
+  console.log("entered level 3")
+
+  nextBlock.nextElementSibling.setAttribute('conquer','')
+  possibleMoves.push(nextBlock.nextElementSibling)
+    if(nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whitePawn"||nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="blackPawn")
     { attackingBlocks.push(currentPieceBlock)
       console.log('done blockable',selectedBlock.parentElement)
-    nextBlock.nextElementSibling.setAttribute('checkmate','') 
+    // nextBlock.nextElementSibling.setAttribute('checkmate','') 
    }
-    nextBlock.nextElementSibling.setAttribute('conquer','')
+
 }
 
 }
