@@ -43,7 +43,7 @@ if(selectedBlock.getAttribute('color')==='white' && isWhitePlayerTurn === false)
 
 //   currentDraggingBlockWidth = selectedBlock.offsetWidth;
 console.log(selectedBlock.parentElement,"king position")
-
+console.log('cheking the checks',isWhiteKingInDanger)
 
 // selectedBlock.parentElement.removeAttribute('checkmate')
 // selectedBlock.parentElement.setAttribute("mf",'')
@@ -1011,7 +1011,7 @@ isWhiteKingInDanger = false;
 function isAttackDefendable(){
   console.log({possibleMoves,attackingBlocks})
   console.log(currentPiece,'currentPiece')
-// console.log('chekcing defendable')
+console.log('chekcing defendable')
 if(currentPiece.getAttribute('data-piece')==="whiteKing"||currentPiece.getAttribute('data-piece')==="blackKing")
 {isSimilar =false;
 return;
@@ -1020,7 +1020,7 @@ return;
  items.removeAttribute('direction')
  return items;}
  )
-
+console.log(attackingBlocks,'wtf')
  attackingBlocks = attackingBlocks.map(items=>{
    items.removeAttribute('direction')
    return items
@@ -1193,6 +1193,7 @@ whiteKing.parentElement.removeAttribute('checkmate')
   attackingBlocks.forEach(item=>{
     item.removeAttribute('blockable')
   })
+  attackingBlocks = []
   isWhiteKingInDanger = false
   return
 }
@@ -1212,7 +1213,7 @@ pawnUpgrade(currentHoveringBlock)
   console.log({isWhiteKingInDanger})
  if(((isWhiteKingInDanger === true && isWhitePlayerTurn === true)
  && (!currentHoveringBlock.hasAttribute('blockable') )
- ) || ((isWhiteKingInDanger === true && isWhitePlayerTurn === true)&&(currentHoveringBlock.hasAttribute('blockable')&&currentPiece.getAttribute('data-piece')))
+ ) || ((isWhiteKingInDanger === true && isWhitePlayerTurn === true)&&(currentHoveringBlock.hasAttribute('blockable')&&currentPiece.getAttribute('data-piece') === 'whiteKing'))
  
  ){
    console.log('this should be running')
