@@ -10,10 +10,6 @@ let isBlackKingInDanger = false;
 let isWhitePlayerTurn =  true;
 let attackingBlocks = [];
 let isSimilar = false;
-let isEnpassant = false;
-let enpassingBlock ;
-let enpassantableBlock ;
-let enpassantTurn ;
  const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const lettersIn = {
   A: 0,
@@ -204,7 +200,6 @@ function createPiece(pieceType,pieceColor,boardBlock){
   actualPiece.setAttribute("filled", "");
   actualPiece.setAttribute('color',pieceColor)
   actualPiece.setAttribute('draggable','true')
-  actualPiece.setAttribute('unmoved','')
   boardBlock.appendChild(actualPiece)
 }
 
@@ -284,13 +279,6 @@ function pawnPossibleMoves(selectedBlock) {
         `[data-id="${selectedBlockId - boardLength}"]`
      
         );
-
-        if(selectedBlock.hasAttribute('unmoved')){
-          let farNextBlock = document.querySelector(
-            `[data-id="${selectedBlockId - boardLength - boardLength}"]`)
-            farNextBlock.setAttribute('enpassant','')
-            possibleMoves.push(farNextBlock)
-        }
         currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
    
   if(nextBlock.firstChild){
@@ -311,12 +299,6 @@ function pawnPossibleMoves(selectedBlock) {
         `[data-id="${selectedBlockId + boardLength}"]`
       );
       currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
-if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
-  let farNextBlock = document.querySelector(
-    `[data-id="${selectedBlockId + boardLength + boardLength}"]`)
-    possibleMoves.push(farNextBlock)
-}
-      
       if(nextBlock.firstChild){
     
         pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
@@ -331,92 +313,12 @@ if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
   // console.log('yhis level cnt ')
     addingEventsInPossibleMoves(possibleMoves);
   }
-
-  function checkingEnpassant(currentPawnBlock){
-
-    let nextBlockColor;
-    let nextBlockType;
-    let previousBlockColor;
-    let previousBlockType; 
-    let currentBlockColor = currentPawnBlock.firstChild.getAttribute('color')
-
-if(currentPawnBlock.nextElementSibling.firstChild){
- nextBlockType = currentPawnBlock.nextElementSibling.firstChild.getAttribute('data-piece');
-
- nextBlockType =  nextBlockType.replace('white','').replace('black','')
-  nextBlockColor = currentPawnBlock.nextElementSibling.firstChild.getAttribute('color')
-}
-
-if(currentPawnBlock.previousElementSibling.firstChild){
-   previousBlockType = currentPawnBlock.previousElementSibling.firstChild.getAttribute('data-piece');
-  
-   previousBlockType =  previousBlockType.replace('white','').replace('black','')
-    previousBlockColor = currentPawnBlock.previousElementSibling.firstChild.getAttribute('color')
-  }
-
-if(!currentPawnBlock.nextElementSibling.firstChild && !currentPawnBlock.previousElementSibling.firstChild)
-return;
-console.log({nextBlockType,nextBlockColor})
-
-    let currentColumn = currentPawnBlock.getAttribute('data-column')
-    currentColumn = lettersIn[currentColumn]
-    console.log({currentColumn},'this is the current column')
-    if(currentColumn>0 && currentColumn<7){
-if(nextBlockType){
-      if(nextBlockColor !== currentBlockColor && nextBlockType === "Pawn")
-
-    {
-      enpassingBlock = currentPawnBlock.nextElementSibling;
-       enpassantableBlock = currentPawnBlock
-       isEnpassant = true;
-       enpassantTurn = !isWhitePlayerTurn;
-       enpassingBlock.setAttribute('enpassingBlock','')
-    }
-    }
-
-    if(previousBlockType){
-      if(previousBlockColor !== currentBlockColor && previousBlockType === "Pawn")
-
-    {
-      enpassingBlock = currentPawnBlock.previousElementSibling;
-      enpassantableBlock = currentPawnBlock
-      isEnpassant = true;
-    enpassantTurn = !isWhitePlayerTurn;
-    enpassingBlock.setAttribute('enpassingBlock','')
-    }
-    }
-  }
-  }
   
 
 function pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock){
 console.log('entered this event',nextBlock,selectedBlock)
 
-if(isEnpassant === true)
-if(currentColumn>0  && currentColumn<7){
-  if(selectedBlock.parentElement.previousElementSibling.firstChild)
-  if((selectedBlock.parentElement.previousElementSibling.hasAttribute('enpassant'))&&selectedBlock.parentElement.previousElementSibling.firstChild.getAttribute('color')!== selectedBlock.getAttribute('color')){
-
   
-
-
-    possibleMoves.push(nextBlock.previousElementSibling)
-
-  
-  }
-  
-  if(selectedBlock.parentElement.nextElementSibling.firstChild )
-  if((selectedBlock.parentElement.nextElementSibling.hasAttribute('enpassant'))&&selectedBlock.parentElement.nextElementSibling.firstChild.getAttribute('color')!== selectedBlock .getAttribute('color')){
-   
-   
- 
-    possibleMoves.push(nextBlock.nextElementSibling)
-  
-  }  
-  
-  }  
-
-
 if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
 
   if(nextBlock.previousElementSibling.firstChild.getAttribute('color')===currentPiece.getAttribute('color'))
@@ -1320,43 +1222,15 @@ resetPossibleMoves()
 if(isEmpty=== true)
 {currentHoveringBlock.addEventListener("dragstart", selectingPiece)
 currentHoveringBlock.appendChild(currentPieceClone)
-if(currentHoveringBlock.firstChild)
-currentHoveringBlock.firstChild.removeAttribute('unmoved')
-if(currentHoveringBlock.hasAttribute('enpassant')){
- checkingEnpassant(currentHoveringBlock)
-}
-if((enpassantTurn === isWhitePlayerTurn && isEnpassant === true) && (enpassingBlock !== currentPieceBlock )){
-  isEnpassant = false;
-  let enpassantableBlocks = document.querySelectorAll(`[enpassant]`)
-  enpassantableBlocks.forEach(blocks=>{
-    blocks.removeAttribute('enpassant')
-    blocks.removeAttribute('enpassingblock')
-   })
-  
-  console.log('how the hell is this not working',enpassantableBlock)
-}
-// if((enpassantTurn === isWhitePlayerTurn && isEnpassant === true) && (currentHoveringBlock !== enpassantableBlock )){
-
-// }
-console.log({isWhitePlayerTurn,isEnpassant})
-if(enpassantTurn === isWhitePlayerTurn && isEnpassant === true){
-console.log('this is running how')
-enpassantableBlock.removeChild(enpassantableBlock.firstChild)
-// enpassantableBlock.removeAttribute('enpassant')
-isEnpassant = false;
-}
-
 
 }
 else{
-
 currentHoveringBlock.appendChild(currentPieceClone)
 currentPieceClone.style.opacity = "1"
 currentHoveringBlock.addEventListener("dragstart", selectingPiece)
 
 currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
-if(currentHoveringBlock.firstChild)
-currentHoveringBlock.firstChild.removeAttribute('unmoved')
+
 
 }
 if((isSimilar === true && currentHoveringBlock.hasAttribute('blockable')) && ((currentPiece.getAttribute('data-piece') !== 'whiteKing')|| (currentPiece.getAttribute('data-piece') !== 'blackKing')))
@@ -1513,7 +1387,6 @@ item.removeAttribute('blockable')
 })
 attackingBlocks = []
 }
-
 isWhitePlayerTurn = isWhitePlayerTurn === true ? false : true;
 console.log({isWhitePlayerTurn,isBlackKingInDanger})
 
