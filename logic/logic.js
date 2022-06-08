@@ -289,6 +289,7 @@ function pawnPossibleMoves(selectedBlock) {
           let farNextBlock = document.querySelector(
             `[data-id="${selectedBlockId - boardLength - boardLength}"]`)
             farNextBlock.setAttribute('enpassant','')
+            if(!farNextBlock.firstChild)
             possibleMoves.push(farNextBlock)
         }
         currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
@@ -314,6 +315,7 @@ function pawnPossibleMoves(selectedBlock) {
 if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
   let farNextBlock = document.querySelector(
     `[data-id="${selectedBlockId + boardLength + boardLength}"]`)
+    if(!farNextBlock.firstChild)
     possibleMoves.push(farNextBlock)
 }
       
@@ -354,8 +356,14 @@ if(currentPawnBlock.previousElementSibling.firstChild){
     previousBlockColor = currentPawnBlock.previousElementSibling.firstChild.getAttribute('color')
   }
 
+
+
 if(!currentPawnBlock.nextElementSibling.firstChild && !currentPawnBlock.previousElementSibling.firstChild)
-return;
+{currentPawnBlock.removeAttribute('enpassant')
+  return;}
+
+
+
 console.log({nextBlockType,nextBlockColor})
 
     let currentColumn = currentPawnBlock.getAttribute('data-column')
