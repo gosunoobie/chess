@@ -285,7 +285,7 @@ function pawnPossibleMoves(selectedBlock) {
      
         );
 
-        if(selectedBlock.hasAttribute('unmoved')){
+        if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
           let farNextBlock = document.querySelector(
             `[data-id="${selectedBlockId - boardLength - boardLength}"]`)
             farNextBlock.setAttribute('enpassant','')
@@ -315,6 +315,7 @@ function pawnPossibleMoves(selectedBlock) {
 if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
   let farNextBlock = document.querySelector(
     `[data-id="${selectedBlockId + boardLength + boardLength}"]`)
+    farNextBlock.setAttribute('enpassant','')
     if(!farNextBlock.firstChild)
     possibleMoves.push(farNextBlock)
 }
