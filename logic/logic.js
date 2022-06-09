@@ -14,6 +14,10 @@ let isEnpassant = false;
 let enpassingBlock ;
 let enpassantableBlock ;
 let enpassantTurn ;
+let castlingBlocks ;
+let isCastlingPossible = false;
+let castlingDistance ;
+let isCastlingDone = false;
  const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const lettersIn = {
   A: 0,
@@ -121,6 +125,8 @@ isWhiteKingInDanger = false;
 isBlackKingInDanger = false;
 
 
+
+
 };
 
 
@@ -162,9 +168,22 @@ function createBoard() {
         createPiece('blackPawn','black',boardBlock)  
       }
 
-      if (boardId === 48) {
+      if (boardId === 56) {
+        createPiece('whiteRook','white',boardBlock)  
+      }
+      if (boardId === 60) {
         createPiece('whiteKing','white',boardBlock)  
       }
+      if (boardId === 58) {
+        createPiece('whiteBishop','white',boardBlock)  
+      }
+      if (boardId === 61) {
+        createPiece('whiteBishop','white',boardBlock)  
+      }
+      if (boardId === 63) {
+        createPiece('whiteRook','white',boardBlock)  
+      }
+
       if (boardId === 45) {
         createPiece('whitePawn','white',boardBlock)  
       }
@@ -246,27 +265,11 @@ return
 
 
 
-   //
-        // boardBlock.addEventListener('dragover',draggingPiece)
       
   });
 
-  // boardBlock.addEventListener("dragend", (e) => {
-    // e.target.removeEventListener("click", selectingPiece);
 
-
-
-  
-      // e.target.removeEventListener('dragover',draggingPiece)
-    
-
-  // });
 }
-
-// let draggingPiece = function draggingPieceFunc(event){
-
-// }
-
 
 
 // For the Pawn 
@@ -923,7 +926,9 @@ function rookPossibleMoves(currentBlock){
    let currentRow = currentBlock.getAttribute("data-row")
    let currentColumn = currentBlock.getAttribute("data-column")
    let currentPieceType = currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','');
- 
+   let currentPieceBlockType;
+   if(currentPieceBlock.firstChild)
+   currentPieceBlockType = currentPieceBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
 let rows = parseInt(currentRow)
 let currentPieceRow = rows;
 let  column = lettersIn[currentColumn]
@@ -1020,8 +1025,21 @@ while(column<8){
     
       nextBlock.parentElement.setAttribute('conquer','')
 
+// castling
+       if(currentPieceBlock.firstChild)
+      if(((nextBlock.hasAttribute('unmoved')&& currentPieceBlock.firstChild.hasAttribute('unmoved'))&& (nextPieceType === "Rook" || nextPieceType === "King"))&& nextPieceColor === currentBlock.firstChild.getAttribute('color'))
+        if(currentPieceBlockType ==="King")
+        {
+        nextBlock.parentElement.setAttribute('castling','')
+        currentBlock.setAttribute('castling','')
+        isCastlingPossible = true;
+      
+
+possibleCastlingBlocksFunc()
+        }
 
 
+      
  
       if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
       if(currentPieceType === "King")
@@ -1062,7 +1080,15 @@ while(column>=0){
     
       nextBlock.parentElement.setAttribute('conquer','')
 
-
+      // castling
+      if(currentPieceBlock.firstChild)
+if(((nextBlock.hasAttribute('unmoved') && currentPieceBlock.firstChild.hasAttribute('unmoved'))&& (nextPieceType === "Rook"))&& nextPieceColor === currentBlock.firstChild.getAttribute('color'))
+  if(currentPieceBlockType ==="King" || currentPieceBlockType === "Rook"){
+  nextBlock.parentElement.setAttribute('castling','')
+  currentBlock.setAttribute('castling','')
+  isCastlingPossible = true;
+ possibleCastlingBlocksFunc()
+}
 
  
       if((nextPieceType === 'Rook'|| nextPieceType === 'Queen')&& currentBlock.firstChild.getAttribute('color') !== nextPieceColor)
@@ -1113,8 +1139,43 @@ attackingBlocks = attackingBlocks.map(items=>{
 console.log({attackingBlocksDirection,attackingBlocks})
 }
 
+
+
 addingEventsInPossibleMoves(possibleMoves)
+
 }
+
+
+// castling Func
+
+function possibleCastlingBlocksFunc(){
+  castlingBlocks =  document.querySelectorAll(`[castling='']`)
+  castlingBlocks = Array.from(castlingBlocks)
+  let castlingBlocksBegin = castlingBlocks[0]
+  let castlingBlocksEnd = castlingBlocks[castlingBlocks.length-1]
+   let castlingBlocksBeginId = castlingBlocksBegin.getAttribute('data-id')
+   let castlingBlocksEndId = castlingBlocksEnd.getAttribute('data-id')
+  
+   castlingBlocksBeginId = parseInt(castlingBlocksBeginId)
+   castlingBlocksEndId  = parseInt(castlingBlocksEndId)
+ castlingDistance = Math.abs(castlingBlocksBeginId -castlingBlocksEndId)
+
+ castlingBlocks = []
+for(let i = 0; i<= castlingDistance;i++){
+  let newCastlingBlocks = document.querySelector(`[data-id = '${castlingBlocksBeginId+i}']`)
+ 
+  newCastlingBlocks.setAttribute('castling','')
+  newCastlingBlocks.classList.add('possible')
+  castlingBlocks.push(newCastlingBlocks)
+}
+
+
+
+   console.log(castlingBlocks,'dsafsfaf')
+console.log({castlingBlocksBeginId,castlingBlocksEndId,castlingDistance})
+}
+
+
 
 
 
@@ -1132,6 +1193,12 @@ function kingPossibleMoves(currentBlock){
 queenPossibleMoves(currentBlock)
 
 }
+
+
+
+// function isCastlingPossible(){
+
+// }
 
 
 function isKingInDanger(){
@@ -1218,6 +1285,88 @@ isBlackKingInDanger = false;
   console.log({isSimilar},currentPiece,'similar?')
 }
 
+function castlingMoveFunc(color){
+  if(castlingDistance === 3)
+  {
+  castlingBlocks[1].addEventListener('dragstart', selectingPiece)
+  castlingBlocks[2].addEventListener('dragstart', selectingPiece)
+ 
+
+if(castlingBlocks[0].firstChild)
+castlingBlocks[0].removeChild(castlingBlocks[0].firstChild)
+if(castlingBlocks[3].firstChild)
+castlingBlocks[3].removeChild(castlingBlocks[3].firstChild)
+createPiece(`${color}Rook`,`${color}`,castlingBlocks[1])
+createPiece(`${color}King`,`${color}`,castlingBlocks[2])
+
+  }
+
+  if(castlingDistance === 4)
+  {
+  castlingBlocks[2].addEventListener('dragstart', selectingPiece)
+  castlingBlocks[3].addEventListener('dragstart', selectingPiece)
+ 
+
+if(castlingBlocks[0].firstChild)
+castlingBlocks[0].removeChild(castlingBlocks[0].firstChild)
+if(castlingBlocks[4].firstChild)
+castlingBlocks[4].removeChild(castlingBlocks[4].firstChild)
+createPiece(`${color}King`,`${color}`,castlingBlocks[2])
+createPiece(`${color}Rook`,`${color}`,castlingBlocks[3])
+
+  }
+  isCastlingPossible = false;
+  castlingBlocks.forEach(blocks=>{
+    blocks.removeAttribute('castling')
+  
+  })
+  // castlingBlocks = [];
+  isCastlingDone = true;
+}
+
+
+
+
+function castlingResetFunc(color){
+  if(castlingDistance === 3)
+  {
+  castlingBlocks[0].addEventListener('dragstart', selectingPiece)
+  castlingBlocks[3].addEventListener('dragstart', selectingPiece)
+ 
+
+if(castlingBlocks[1].firstChild)
+castlingBlocks[1].removeChild(castlingBlocks[1].firstChild)
+if(castlingBlocks[2].firstChild)
+castlingBlocks[2].removeChild(castlingBlocks[2].firstChild)
+createPiece(`${color}King`,`${color}`,castlingBlocks[0])
+createPiece(`${color}Rook`,`${color}`,castlingBlocks[3])
+
+  }
+
+  if(castlingDistance === 4)
+  {
+  castlingBlocks[0].addEventListener('dragstart', selectingPiece)
+  castlingBlocks[4].addEventListener('dragstart', selectingPiece)
+ 
+
+if(castlingBlocks[2].firstChild)
+castlingBlocks[2].removeChild(castlingBlocks[2].firstChild)
+if(castlingBlocks[3].firstChild)
+castlingBlocks[3].removeChild(castlingBlocks[3].firstChild)
+createPiece(`${color}Rook`,`${color}`,castlingBlocks[0])
+createPiece(`${color}King`,`${color}`,castlingBlocks[4])
+
+  }
+  // isCastlingPossible = false;
+  isCastlingDone = false
+  castlingBlocks.forEach(blocks=>{
+    blocks.removeAttribute('castling')
+  
+  })
+  // castlingBlocks = [];
+  isCastlingDone = false;
+}
+
 //same in all pieces
 
 function addingEventsInPossibleMoves(possibleMoves) {
@@ -1246,54 +1395,16 @@ currentColumn = lettersIn[currentColumn]
 }
 
 
+
+
+
   possibleMoves.forEach((item) => {
 
     item.addEventListener("dragend", pieceMovingToNextBlock);
+    if(!item.classList.contains('possible'))
     item.classList.add("possible");
   });
 
-}
-
-let blockingCheckmate = function blockingCheckmateFunc(event){
-
-  console.log("blocking")
-//   let isEmpty = true;
-// if(draggedItemClone.parentElement)
-// draggedItemClone.parentElement.removeChild(draggedItemClone)
-
-// currentPiece.style.opacity = "1"
-// if(currentHoveringBlock.firstChild === currentPiece)
-// return
-
-
-//   if((currentHoveringBlock.classList.contains('possible'))||(currentHoveringBlock.parentElement.classList.contains('possible'))){  
-    
-  
-    
-//     if(currentHoveringBlock.firstChild)
-//     isEmpty = false;
- 
-
-// let  currentPieceClone = currentPiece.cloneNode(true);
-
-
-// event.target.parentElement.removeChild(currentPiece) 
-// resetPossibleMoves()
-// if(isEmpty=== true)
-// {currentHoveringBlock.addEventListener("dragstart", selectingPiece)
-// currentHoveringBlock.appendChild(currentPieceClone)
-
-// }
-// else{
-// currentHoveringBlock.appendChild(currentPieceClone)
-// currentPieceClone.style.opacity = "1"
-// currentHoveringBlock.addEventListener("dragstart", selectingPiece)
-
-// currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
-
-
-// }}
-// resetPossibleMoves()
 }
 
 
@@ -1309,9 +1420,24 @@ draggedItemClone.parentElement.removeChild(draggedItemClone)
 currentPiece.style.opacity = "1"
 if(!currentHoveringBlock)
 return
-if(currentHoveringBlock.firstChild === currentPiece)
-return
 
+
+if(currentHoveringBlock.firstChild === currentPiece)
+  return
+
+  if((currentPiece.getAttribute('data-piece') === "whiteKing" || currentPiece.getAttribute('data-piece') === 'blackKing'  || currentPiece.getAttribute('data-piece') === 'whiteRook' || currentPiece.getAttribute('data-piece') === 'whiteKing') &&!currentPiece.hasAttribute('unmoved'))
+{
+  let allBlocks = document.querySelectorAll('.possible')
+  if(allBlocks.length ===0)
+  return
+  allBlocks.forEach(item=>{
+   
+    if(item.hasAttribute('castling')){
+      item.removeAttribute('castling')
+    }
+  
+  })
+}
 
   if((currentHoveringBlock.classList.contains('possible'))||(currentHoveringBlock.parentElement.classList.contains('possible'))){  
     
@@ -1323,17 +1449,42 @@ return
 
 let  currentPieceClone = currentPiece.cloneNode(true);
 
-
+let color = currentPiece.getAttribute('color')
 event.target.parentElement.removeChild(currentPiece) 
 resetPossibleMoves()
 if(isEmpty=== true)
-{currentHoveringBlock.addEventListener("dragstart", selectingPiece)
+{
+  attackingBlocks = []
+  // castling blocks moving 
+  if((isCastlingPossible === true  && currentHoveringBlock.hasAttribute('castling'))  && !currentPieceBlock.hasAttribute('checkmate')){
+
+    castlingMoveFunc(color)
+    //  isKingInDanger()
+
+  }
+  
+  else{
+ 
+  
+  currentHoveringBlock.addEventListener("dragstart", selectingPiece)
 currentHoveringBlock.appendChild(currentPieceClone)
+
+
+
+
+
+  }
+
+
+
 if(currentHoveringBlock.firstChild)
 currentHoveringBlock.firstChild.removeAttribute('unmoved')
 if(currentHoveringBlock.hasAttribute('enpassant')){
  checkingEnpassant(currentHoveringBlock)
 }
+
+
+
 if((enpassantTurn === isWhitePlayerTurn && isEnpassant === true) && (enpassingBlock !== currentPieceBlock )){
   isEnpassant = false;
   let enpassantableBlocks = document.querySelectorAll(`[enpassant]`)
@@ -1359,6 +1510,15 @@ isEnpassant = false;
 }
 else{
 
+  if((isCastlingPossible === true  && currentHoveringBlock.hasAttribute('castling')) && !currentPieceBlock.hasAttribute('checkmate')){
+
+    castlingMoveFunc(color)
+    isKingInDanger()
+
+  }
+  else{
+  
+    attackingBlocks = []
 currentHoveringBlock.appendChild(currentPieceClone)
 currentPieceClone.style.opacity = "1"
 currentHoveringBlock.addEventListener("dragstart", selectingPiece)
@@ -1366,7 +1526,7 @@ currentHoveringBlock.addEventListener("dragstart", selectingPiece)
 currentHoveringBlock.removeChild(currentHoveringBlock.firstChild)
 if(currentHoveringBlock.firstChild)
 currentHoveringBlock.firstChild.removeAttribute('unmoved')
-
+  }
 }
 if((isSimilar === true && currentHoveringBlock.hasAttribute('blockable')) && ((currentPiece.getAttribute('data-piece') !== 'whiteKing')|| (currentPiece.getAttribute('data-piece') !== 'blackKing')))
 {   let lastchecks = document.querySelectorAll(`[checkmate= '']`)
@@ -1394,15 +1554,20 @@ pawnUpgrade(currentHoveringBlock)
 
   isKingInDanger()
 
+
+
+
+
   console.log({attackingBlocks,currentPiece},'testing')
   resetPossibleMoves()
   // attackingBlocks = []
   console.log({isWhiteKingInDanger})
  if(((isWhiteKingInDanger === true && isWhitePlayerTurn === true)
  && (!currentHoveringBlock.hasAttribute('blockable') )
- ) || ((isWhiteKingInDanger === true && isWhitePlayerTurn === true)&&(currentHoveringBlock.hasAttribute('blockable')&&currentPiece.getAttribute('data-piece')))
+ ) || ((isWhiteKingInDanger === true && isWhitePlayerTurn === true)&&(currentHoveringBlock.hasAttribute('blockable')&&currentPiece.getAttribute('data-piece'))))
+ if(isCastlingDone === false)
  
- ){
+ {
    console.log('this should be running')
   isWhiteKingInDanger = false;
   isKingInDanger()
@@ -1448,12 +1613,19 @@ isWhitePlayerTurn = true
 return
 
   }
+  else{
+    castlingResetFunc(color)
+    return
+  }
+
 
   if(((isBlackKingInDanger === true && isWhitePlayerTurn === false)
   && (!currentHoveringBlock.hasAttribute('blockable') )
   ) || ((isBlackKingInDanger === true && isWhitePlayerTurn === false)&&(currentHoveringBlock.hasAttribute('blockable')&&currentPiece.getAttribute('data-piece')))
   
-  ){
+  )
+  if(isCastlingDone === false)
+  {
     console.log('this should be running')
    isBlackKingInDanger = false;
    isKingInDanger()
@@ -1498,6 +1670,9 @@ return
  isWhitePlayerTurn = false
  return
  
+   }else{
+     castlingResetFunc(color)
+     return
    }
 
 
@@ -1509,10 +1684,7 @@ else{
   return
   // resetPossibleMoves();
 }
-let lastchecks = document.querySelectorAll(`[checkmate= '']`)
-lastchecks.forEach(item=>{
-  item.removeAttribute('checkmate')
-})
+
 
 
 if(isWhiteKingInDanger === false && isBlackKingInDanger === false){
@@ -1521,6 +1693,18 @@ item.removeAttribute('blockable')
 
 })
 attackingBlocks = []
+}
+
+if(!isWhiteKingInDanger === true ){
+  // let lastchecks = document.querySelector(`[data-piece='whiteKing']`)
+  currentPieceBlock.removeAttribute('checkmate')
+  
+}
+
+if(!isBlackKingInDanger === true ){
+  // let lastchecks = document.querySelector(`[data-piece='blackKing']`)
+  currentPieceBlock.removeAttribute('checkmate')
+  
 }
 
 isWhitePlayerTurn = isWhitePlayerTurn === true ? false : true;
@@ -1538,7 +1722,14 @@ console.log("reseting")
 let allBlocks = document.querySelectorAll('.possible')
 allBlocks.forEach(item=>{
   item.classList.remove("possible")
+  
+
 })
+
+// let lastchecks = document.querySelectorAll(`[checkmate= '']`)
+// lastchecks.forEach(item=>{
+//   item.removeAttribute('checkmate')
+// })
   possibleMoves.forEach((item) => {
     item.classList.remove("possible");
     item.removeAttribute('conquer')
