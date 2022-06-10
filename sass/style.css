@@ -149,6 +149,14 @@ article[checkmate] {
   box-shadow: 0px 0px 0px 6px red inset;
 }
 
+article[whiteDanger] {
+  box-shadow: 0px 0px 0px 6px blue inset;
+}
+
+article[blackDanger] {
+  box-shadow: 0px 0px 0px 6px orange inset;
+}
+
 .piece-selection-container {
   display: none;
   position: absolute;
