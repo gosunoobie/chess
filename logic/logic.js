@@ -18,6 +18,13 @@ let castlingBlocks ;
 let isCastlingPossible = false;
 let castlingDistance ;
 let isCastlingDone = false;
+let isCheckingIllegalMoves = false;
+let whiteIllegalMoves = []
+let blackIllegalMoves = []
+let kingMoves = [];
+let isGettingKingMoves = false;
+let isCheckmate = false;
+
  const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const lettersIn = {
   A: 0,
@@ -185,16 +192,16 @@ function createBoard() {
       }
 
       if (boardId === 45) {
-        createPiece('whitePawn','white',boardBlock)  
+        createPiece('whiteKnight','white',boardBlock)  
       }
       if (boardId === 43) {
-        createPiece('whitePawn','white',boardBlock)  
+        createPiece('whiteKnight','white',boardBlock)  
       }
       if (boardId === 10) {
         createPiece('blackKing','black',boardBlock)  
       }
       if (boardId === 44) {
-        createPiece('whitePawn','white',boardBlock)  
+        createPiece('whiteKnight','white',boardBlock)  
       }
       if (boardId === 12) {
   
@@ -205,7 +212,7 @@ function createBoard() {
       if (boardId === 27) {
    
       }
-      if (boardId === 14) {
+      if (boardId === 22) {
         createPiece('whitePawn','white',boardBlock) 
       }
 
@@ -275,27 +282,39 @@ return
 // For the Pawn 
 
 function pawnPossibleMoves(selectedBlock) {
+
+
+  console.log('pawn loading',selectedBlock)
     selectedBlockId = selectedBlock.parentElement.getAttribute("data-id");
     selectedBlockId = parseInt(selectedBlockId);
     selectedPieceColor = selectedBlock.getAttribute('color')
+  
     possibleMoves.push(selectedBlock.parentElement)
     let nextBlock;
     
     let currentColumn;
+
+
     if (selectedPieceColor === "white") {
       nextBlock = document.querySelector(
         `[data-id="${selectedBlockId - boardLength}"]`
      
         );
-
+        currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
+        if(isCheckingIllegalMoves === true)
+      {  
+        console.log('this shh')
+        pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
+      }
         if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
           let farNextBlock = document.querySelector(
             `[data-id="${selectedBlockId - boardLength - boardLength}"]`)
             farNextBlock.setAttribute('enpassant','')
             if(!farNextBlock.firstChild)
+            if(isCheckingIllegalMoves === false)
             possibleMoves.push(farNextBlock)
         }
-        currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
+
    
   if(nextBlock.firstChild){
 
@@ -303,7 +322,7 @@ function pawnPossibleMoves(selectedBlock) {
     addingEventsInPossibleMoves(possibleMoves);
     return;
   }
- 
+  if(isCheckingIllegalMoves === false)
       possibleMoves.push(nextBlock);
   
 
@@ -315,11 +334,15 @@ function pawnPossibleMoves(selectedBlock) {
         `[data-id="${selectedBlockId + boardLength}"]`
       );
       currentColumn = lettersIn[nextBlock.getAttribute('data-column')]
-if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
+      if(isCheckingIllegalMoves === true)
+        pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
+
+      if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
   let farNextBlock = document.querySelector(
     `[data-id="${selectedBlockId + boardLength + boardLength}"]`)
     farNextBlock.setAttribute('enpassant','')
     if(!farNextBlock.firstChild)
+    if(isCheckingIllegalMoves === false)
     possibleMoves.push(farNextBlock)
 }
       
@@ -329,7 +352,7 @@ if(selectedBlock.hasAttribute('unmoved') && !nextBlock.firstChild){
         addingEventsInPossibleMoves(possibleMoves);
         return;
       }
-     
+      if(isCheckingIllegalMoves === false)
       possibleMoves.push(nextBlock);
  
       pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock)
@@ -402,7 +425,8 @@ if(nextBlockType){
   
 
 function pawnConquerPossibleMoves(nextBlock,currentColumn,selectedBlock){
-console.log('entered this event',nextBlock,selectedBlock)
+
+let currentPieceColor = selectedBlock.getAttribute('color')
 
 if(isEnpassant === true)
 if(currentColumn>0  && currentColumn<7){
@@ -427,9 +451,26 @@ if(currentColumn>0  && currentColumn<7){
   }  
   
   }  
+  
 
+  if(isCheckingIllegalMoves === true)
+  { 
+  
+  if(currentColumn> 0 && currentColumn< 7)
+  {if(currentPieceColor === 'black'){
+  whiteIllegalMoves.push(nextBlock.nextElementSibling)
+  whiteIllegalMoves.push(nextBlock.previousElementSibling)  
+}
+  if(currentPieceColor === 'white')
+  {
+  blackIllegalMoves.push(nextBlock.nextElementSibling)  
+  blackIllegalMoves.push(nextBlock.previousElementSibling)  
+}
+}}
 
-if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
+if(currentColumn>0 && nextBlock.previousElementSibling.firstChild){
+  console.log('entered this event',nextBlock,selectedBlock,currentPieceColor,isCheckingIllegalMoves)
+
 
   if(nextBlock.previousElementSibling.firstChild.getAttribute('color')===currentPiece.getAttribute('color'))
 
@@ -437,6 +478,7 @@ if(currentColumn>0&&nextBlock.previousElementSibling.firstChild){
 
   console.log("reached level 2")
   possibleMoves.push(nextBlock.previousElementSibling)
+
 if(nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="whitePawn"||nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="blackPawn")
  { attackingBlocks.push(currentPieceBlock)
   console.log('done blockable',selectedBlock.parentElement)
@@ -444,14 +486,18 @@ if(nextBlock.previousElementSibling.firstChild.getAttribute('data-piece') ==="wh
 }
   nextBlock.previousElementSibling.setAttribute('conquer','')
 }
-if(currentColumn<7&& nextBlock.nextElementSibling.firstChild){
+if(currentColumn<7 && nextBlock.nextElementSibling.firstChild){
 
+
+
+ 
   if(nextBlock.nextElementSibling.firstChild.getAttribute('color') === currentPiece.getAttribute('color'))
   return
   console.log("entered level 3")
 
   nextBlock.nextElementSibling.setAttribute('conquer','')
   possibleMoves.push(nextBlock.nextElementSibling)
+
     if(nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="whitePawn"||nextBlock.nextElementSibling.firstChild.getAttribute('data-piece') ==="blackPawn")
     { attackingBlocks.push(currentPieceBlock)
       console.log('done blockable',selectedBlock.parentElement)
@@ -522,6 +568,7 @@ selectedPieceType.catch((error)=>{
 function knightPossibleMoves(currentBlock){
   let currentRow = currentBlock.getAttribute("data-row")
   let currentColumn = currentBlock.getAttribute("data-column")
+  let currentPieceColor = currentBlock.firstChild.getAttribute('color')
   let initialrows = parseInt(currentRow)
   let  initialcolumn = lettersIn[currentColumn]
 let rows = parseInt(currentRow)+1
@@ -669,6 +716,13 @@ currentBlock.setAttribute('checkmate','')
 
 }
 
+if(isCheckingIllegalMoves === true)
+{ if(currentPieceColor === 'black')
+  whiteIllegalMoves.push([...possibleMoves])
+  if(currentPieceColor === 'white')
+  blackIllegalMoves.push([...possibleMoves])
+}
+
 possibleMoves = possibleMoves.filter(item=>{
 
   if(!item.firstChild)
@@ -699,14 +753,17 @@ addingEventsInPossibleMoves(possibleMoves)
 function bishopPossibleMoves(currentBlock){
   let currentRow = currentBlock.getAttribute("data-row")
   let currentColumn = currentBlock.getAttribute("data-column")
-
+  let currentPieceColor = currentBlock.firstChild.getAttribute('color')
 let rows = parseInt(currentRow)
 let currentPieceRow = rows;
 let  column = lettersIn[currentColumn]
+console.log("bishop")
 
 let currentPieceType = currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','');
-
-
+if(isGettingKingMoves === true)
+{possibleMoves = []
+  isCheckingIllegalMoves = false
+}
 while(rows<8&&column>=0){
     let nextBlock = document.querySelector(`[data-rc="${letters[column]}${rows}"]`);
     nextBlock.setAttribute('direction','bl')
@@ -880,6 +937,45 @@ currentBlock.setAttribute('checkmate','') }
 }
 
 
+if(isCheckingIllegalMoves === true)
+
+{
+  if(!currentBlock.firstChild)
+          return;
+          let currentPieceColor = currentBlock.firstChild.getAttribute('color')
+          let currentRow = currentBlock.getAttribute('data-row')
+          let currentColumn = currentBlock.getAttribute('data-column')
+          console.log(currentBlock.firstChild)
+  if(currentBlock.firstChild.getAttribute('data-piece')==="whiteKing"||currentBlock.firstChild.getAttribute('data-piece')==="blackKing"){
+    console.log('this event should be running')
+
+  currentRow = parseInt(currentRow)
+  currentColumn = lettersIn[currentColumn]
+  
+    possibleMoves = possibleMoves.filter(item=>{
+      let rowValue = item.getAttribute('data-row')
+      let columnValue = item.getAttribute('data-column')
+      
+      rowValue = parseInt(rowValue)
+      columnValue = lettersIn[columnValue]
+      if(currentRow===rowValue-1||currentRow===rowValue+1||currentColumn===columnValue+1||currentColumn===columnValue-1||(currentColumn===columnValue&&currentRow==rowValue)){
+        return item
+      }
+      
+    
+    })
+    console.log(possibleMoves)
+  
+  
+
+}
+if(currentPieceColor === 'black')
+whiteIllegalMoves.push([...possibleMoves])
+if(currentPieceColor === 'white')
+blackIllegalMoves.push([...possibleMoves])
+}
+
+
 possibleMoves = possibleMoves.filter(item=>{
 
 
@@ -912,20 +1008,24 @@ attackingBlocks = attackingBlocks.map(items=>{
   return items
 })
 
-console.log({attackingBlocksDirection,attackingBlocks})
+console.log({attackingBlocksDirection,attackingBlocks,possibleMoves})
 }
 
+console.log(possibleMoves)
 addingEventsInPossibleMoves(possibleMoves)
 }
 
 // For the Rook 
 
 function rookPossibleMoves(currentBlock){
+console.log(currentBlock)
+console.log("rook")
 
-
+console.log(possibleMoves)
    let currentRow = currentBlock.getAttribute("data-row")
    let currentColumn = currentBlock.getAttribute("data-column")
    let currentPieceType = currentBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','');
+   let currentPieceColor = currentBlock.firstChild.getAttribute('color')
    let currentPieceBlockType;
    if(currentPieceBlock.firstChild)
    currentPieceBlockType = currentPieceBlock.firstChild.getAttribute('data-piece').replace('white','').replace('black','')
@@ -933,6 +1033,7 @@ let rows = parseInt(currentRow)
 let currentPieceRow = rows;
 let  column = lettersIn[currentColumn]
 let currentPieceColumn = column
+
 
 while(rows<8){
     let nextBlock = document.querySelector(`[data-rc="${currentColumn}${rows}"]`);
@@ -1106,6 +1207,46 @@ if(((nextBlock.hasAttribute('unmoved') && currentPieceBlock.firstChild.hasAttrib
 
 }
 
+if(isCheckingIllegalMoves === true)
+
+{
+  if(!currentBlock.firstChild)
+          return;
+          let currentPieceColor = currentBlock.firstChild.getAttribute('color')
+          let currentRow = currentBlock.getAttribute('data-row')
+          let currentColumn = currentBlock.getAttribute('data-column')
+          console.log(currentBlock.firstChild)
+  if(currentBlock.firstChild.getAttribute('data-piece')==="whiteKing"||currentBlock.firstChild.getAttribute('data-piece')==="blackKing"){
+    console.log('this event should be running')
+
+  currentRow = parseInt(currentRow)
+  currentColumn = lettersIn[currentColumn]
+  
+    possibleMoves = possibleMoves.filter(item=>{
+      let rowValue = item.getAttribute('data-row')
+      let columnValue = item.getAttribute('data-column')
+      
+      rowValue = parseInt(rowValue)
+      columnValue = lettersIn[columnValue]
+      if(currentRow===rowValue-1||currentRow===rowValue+1||currentColumn===columnValue+1||currentColumn===columnValue-1||(currentColumn===columnValue&&currentRow==rowValue)){
+        return item
+      }
+      
+    
+    })
+ 
+  
+  
+
+}
+if(currentPieceColor === 'black')
+whiteIllegalMoves.push([...possibleMoves])
+if(currentPieceColor === 'white')
+blackIllegalMoves.push([...possibleMoves])
+}
+
+
+
 possibleMoves = possibleMoves.filter(item=>{
 
 
@@ -1120,7 +1261,10 @@ possibleMoves = possibleMoves.filter(item=>{
     return
   }
 })
+console.log(possibleMoves,isCheckingIllegalMoves)
+
 possibleMoves = [... new Set(possibleMoves)]
+console.log(possibleMoves) 
 
 if(attackingBlocks.length === 2){
 
@@ -1137,6 +1281,39 @@ attackingBlocks = attackingBlocks.map(items=>{
   return items
 })
 console.log({attackingBlocksDirection,attackingBlocks})
+}
+
+
+if(isGettingKingMoves === true){
+
+
+ let currentPieceColor = currentBlock.firstChild.getAttribute('color')
+ let currentRow = currentBlock.getAttribute('data-row')
+ let currentColumn = currentBlock.getAttribute('data-column')
+ console.log(currentBlock.firstChild)
+if(currentBlock.firstChild.getAttribute('data-piece')==="whiteKing"||currentBlock.firstChild.getAttribute('data-piece')==="blackKing"){
+console.log('this event should be running')
+
+currentRow = parseInt(currentRow)
+currentColumn = lettersIn[currentColumn]
+
+possibleMoves = possibleMoves.filter(item=>{
+let rowValue = item.getAttribute('data-row')
+let columnValue = item.getAttribute('data-column')
+
+rowValue = parseInt(rowValue)
+columnValue = lettersIn[columnValue]
+if(currentRow===rowValue-1||currentRow===rowValue+1||currentColumn===columnValue+1||currentColumn===columnValue-1||(currentColumn===columnValue&&currentRow==rowValue)){
+return item
+}
+
+
+})
+
+}
+kingMoves.push([...possibleMoves])
+isGettingKingMoves = false
+return;
 }
 
 
@@ -1373,6 +1550,7 @@ function addingEventsInPossibleMoves(possibleMoves) {
 
 
 if(currentPiece.getAttribute('data-piece')==="whiteKing"||currentPiece.getAttribute('data-piece')==="blackKing"){
+  let currentPieceColor = currentPiece.getAttribute('color')
 let currentRow = currentPieceBlock.getAttribute('data-row')
 let currentColumn = currentPieceBlock.getAttribute('data-column')
 currentRow = parseInt(currentRow)
@@ -1392,8 +1570,9 @@ currentColumn = lettersIn[currentColumn]
   })
 
   
+ 
+  
 }
-
 
 
 
@@ -1553,13 +1732,16 @@ pawnUpgrade(currentHoveringBlock)
 
 
   isKingInDanger()
-
-
+  resetPossibleMoves()
+  console.log({isWhiteKingInDanger,isBlackKingInDanger,isWhitePlayerTurn})
+  if(isWhiteKingInDanger === true || isBlackKingInDanger === true)
+  checkAllPiecesMoves()
+resetPossibleMoves()
 
 
 
   console.log({attackingBlocks,currentPiece},'testing')
-  resetPossibleMoves()
+ 
   // attackingBlocks = []
   console.log({isWhiteKingInDanger})
  if(((isWhiteKingInDanger === true && isWhitePlayerTurn === true)
@@ -1629,6 +1811,7 @@ return
     console.log('this should be running')
    isBlackKingInDanger = false;
    isKingInDanger()
+
    resetPossibleMoves()
    let lastchecks = document.querySelectorAll(`[checkmate= '']`)
    lastchecks.forEach(item=>{
@@ -1665,6 +1848,7 @@ return
  console.log('is this one')
  // isWhiteKingInDanger = true
  isKingInDanger()
+
  resetPossibleMoves()
  console.log({isBlackKingInDanger},'checking')
  isWhitePlayerTurn = false
@@ -1706,6 +1890,9 @@ if(!isBlackKingInDanger === true ){
   currentPieceBlock.removeAttribute('checkmate')
   
 }
+if(isCheckmate === true)
+gameOver() 
+
 
 isWhitePlayerTurn = isWhitePlayerTurn === true ? false : true;
 console.log({isWhitePlayerTurn,isBlackKingInDanger})
@@ -1741,4 +1928,130 @@ allBlocks.forEach(item=>{
  
   possibleMoves = [];
  
+}
+
+
+
+function checkAllPiecesMoves(){
+  let allPieces ;
+
+
+  if(isWhitePlayerTurn === false && isWhiteKingInDanger === true) 
+    allPieces = document.querySelectorAll(`[color="black"]`) 
+ 
+    if(isWhitePlayerTurn === true && isBlackKingInDanger === true)
+    allPieces = document.querySelectorAll(`[color="white"]`) 
+
+if(!allPieces)
+return
+  allPieces = Array.from(allPieces)
+console.log({allPieces})
+
+allPieces.forEach(pieces=>{
+  isCheckingIllegalMoves = true;
+  let pieceType = pieces.getAttribute('data-piece')
+  let pieceColor = pieces.getAttribute('color')
+  pieceType = pieceType.replace('white','').replace('black','')
+  pieceBlock = pieces.parentElement
+
+console.log({pieceType,pieceBlock,pieces})
+
+
+if(pieceType === 'Bishop'){
+  bishopPossibleMoves(pieceBlock)
+}
+
+if(pieceType === 'Knight'){
+knightPossibleMoves(pieceBlock)
+}
+if(pieceType === 'Rook'){
+  rookPossibleMoves(pieceBlock)
+  }
+
+if(pieceType === 'Queen'){
+queenPossibleMoves(pieceBlock)
+}
+if(pieceType === 'King'){
+kingPossibleMoves(pieceBlock)
+}
+if(pieceType === 'Pawn'){
+ pawnPossibleMoves(pieces)
+}
+})
+
+if(isWhitePlayerTurn === false && isWhiteKingInDanger === true){
+  console.log('entering')
+
+  whiteIllegalMoves = whiteIllegalMoves.flat()
+whiteIllegalMoves = [... whiteIllegalMoves]
+whiteIllegalMoves = new Set ([...whiteIllegalMoves])
+whiteIllegalMoves = Array.from(whiteIllegalMoves)
+console.log({whiteIllegalMoves})
+whiteIllegalMoves.forEach(blocks=>{
+  blocks.setAttribute('whiteDanger','')
+} )
+
+
+let whiteKing = document.querySelector(`[data-piece ='whiteKing']`)
+ whiteKingBlock = whiteKing.parentElement
+isGettingKingMoves = true
+ kingPossibleMoves(whiteKingBlock)
+
+ kingMoves = kingMoves.flat()
+
+ isCheckmate = kingMoves.every(moves=>{
+
+  return whiteIllegalMoves.some(move=>
+    move === moves
+    )
+ })
+
+
+}
+
+if(isWhitePlayerTurn === true && isBlackKingInDanger === true){
+
+  blackIllegalMoves = blackIllegalMoves.flat()
+  blackIllegalMoves = [... blackIllegalMoves]
+  console.log({blackIllegalMoves})
+  blackIllegalMoves.forEach(blocks=>{
+    blocks.setAttribute('blackDanger','')
+  }
+    )
+  
+    
+  }
+ 
+
+  dangerReset()
+
+
+}
+
+
+function dangerReset(){
+  let allBlocks
+  if(isWhitePlayerTurn === false)
+ { allBlocks = document.querySelectorAll(`[whiteDanger]`)
+ allBlocks.forEach(blocks=>{
+  blocks.removeAttribute('whiteDanger')
+  blocks.removeAttribute('conquer')
+})
+} 
+ else
+ { allBlocks = document.querySelectorAll(`[blackDanger]`)
+
+ allBlocks.forEach(blocks=>{
+  blocks.removeAttribute('blackDanger')
+})  
+}
+  
+
+}
+
+
+function gameOver(){
+
+  console.log("game over")
+  window.prompt("game over")
 }
