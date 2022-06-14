@@ -50,84 +50,84 @@ div[noevents] {
 }
 
 div[data-piece=blackPawn] {
-  background-image: url(../images/blackPawn.png);
+  background-image: url(./images/blackPawn.png);
   background-size: 30px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=blackRook] {
-  background-image: url(../images/blackRook.png);
+  background-image: url(./images/blackRook.png);
   background-size: 37.5px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=blackKnight] {
-  background-image: url(../images/blackKnight.png);
+  background-image: url(./images/blackKnight.png);
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=blackBishop] {
-  background-image: url(../images/blackBishop.png);
+  background-image: url(./images/blackBishop.png);
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=blackQueen] {
-  background-image: url(../images/blackQueen.png);
+  background-image: url(./images/blackQueen.png);
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=blackKing] {
-  background-image: url(../images/blackKing.png);
+  background-image: url(./images/blackKing.png);
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=whitePawn] {
-  background-image: url(../images/whitePawn.png);
+  background-image: url(./images/whitePawn.png);
   background-size: 30px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=whiteRook] {
-  background-image: url(../images/whiteRook.png);
+  background-image: url(./images/whiteRook.png);
   background-size: 37.5px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=whiteKnight] {
-  background-image: url(../images/whiteKnight.png);
+  background-image: url(./images/whiteKnight.png);
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=whiteBishop] {
-  background-image: url(../images/whiteBishop.png);
+  background-image: url(./images/whiteBishop.png);
   background-size: 42.5px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=whiteQueen] {
-  background-image: url(../images/whiteQueen.png);
+  background-image: url(./images/whiteQueen.png);
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 div[data-piece=whiteKing] {
-  background-image: url(../images/whiteKing.png);
+  background-image: url(./images/whiteKing.png);
   background-size: 45px;
   background-repeat: no-repeat;
   background-position: center;
