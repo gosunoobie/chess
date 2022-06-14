@@ -1,0 +1,195 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.chess-board {
+  width: 550px;
+  height: 550px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  border-collapse: separate;
+  border-radius: 15px;
+}
+
+.whiteBlock {
+  background: rgb(238, 238, 210);
+}
+
+.blackBlock {
+  background: rgb(118, 150, 86);
+}
+
+article {
+  width: 68.25px;
+  height: 68.25px;
+  transition: box-shadow 0.25s ease-in-out;
+}
+
+div {
+  height: 68.25px;
+  width: 68.25px;
+}
+
+div[filled] {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+div[noevents] {
+  pointer-events: none;
+}
+
+div[data-piece=blackPawn] {
+  background-image: url(../images/blackPawn.png);
+  background-size: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=blackRook] {
+  background-image: url(../images/blackRook.png);
+  background-size: 37.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=blackKnight] {
+  background-image: url(../images/blackKnight.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=blackBishop] {
+  background-image: url(../images/blackBishop.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=blackQueen] {
+  background-image: url(../images/blackQueen.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=blackKing] {
+  background-image: url(../images/blackKing.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=whitePawn] {
+  background-image: url(../images/whitePawn.png);
+  background-size: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=whiteRook] {
+  background-image: url(../images/whiteRook.png);
+  background-size: 37.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=whiteKnight] {
+  background-image: url(../images/whiteKnight.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=whiteBishop] {
+  background-image: url(../images/whiteBishop.png);
+  background-size: 42.5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=whiteQueen] {
+  background-image: url(../images/whiteQueen.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[data-piece=whiteKing] {
+  background-image: url(../images/whiteKing.png);
+  background-size: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+div[selected] {
+  background-size: 40px;
+}
+
+.possible {
+  background: rgba(108, 154, 168, 0.5);
+}
+
+article[conquer] {
+  box-shadow: 0px 0px 0px 6px #f05974 inset;
+}
+
+article[checkmate] {
+  box-shadow: 0px 0px 0px 6px red inset;
+}
+
+article[whiteDanger] {
+  box-shadow: 0px 0px 0px 6px blue inset;
+}
+
+article[blackDanger] {
+  box-shadow: 0px 0px 0px 6px orange inset;
+}
+
+.piece-selection-container {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  width: 20rem;
+  background: wheat;
+  padding: 1.5rem;
+  text-align: center;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid black;
+  transform-style: preserve-3d;
+}
+
+.container-wrapper {
+  content: " ";
+  position: absolute;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(108, 154, 168, 0.25);
+  transform: inherit;
+  display: none;
+}
+
+.piece-option {
+  padding: 1rem;
+  border: 2px solid black;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+article[hovering] {
+  box-shadow: 0px 0px 0px 6px black inset;
+}/*# sourceMappingURL=style.css.map */
